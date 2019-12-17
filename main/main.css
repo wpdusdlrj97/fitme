@@ -1,0 +1,165 @@
+#banner{
+    width:90%;
+    margin-top:70px;
+    z-index: 1;
+    height:28vw;
+    padding-bottom:20px;
+    margin-left:5%;
+    float:left;
+}
+.swiper-container {
+    width: 100%;
+    z-index: 1;
+}
+.swiper-slide {
+    z-index: 1;
+    text-align: center;
+    font-size: 18px;
+    background: #fff;
+    /* Center slide text vertically */
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
+    -webkit-justify-content: center;
+    justify-content: center;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    -webkit-align-items: center;
+}
+#center_box{
+    width:100%;
+    margin-top:50px;
+    float:left;
+}
+
+#center_box .product_new_box{
+    width:90%;
+    margin-left:5%;
+    float:left;
+}
+#center_box .product_new_box .product_new_box_text{
+    width:100%;
+    height:40px;
+    float:left;
+}
+#center_box .product_new_box .product_new_box_text .product_new_box_text_title{
+    float:left;
+    font-size:25px;
+    font-weight: bold;
+    vertical-align:bottom;
+}
+#center_box .product_new_box .product_new_box_text .product_new_box_text_contents{
+    float:left;
+    padding-top:17px;
+    font-size:13px;
+    color:#646464;
+    vertical-align:bottom;
+}
+#center_box .product_new_box .product_new_box_text .product_new_box_text_more{
+    float:right;
+    padding-top:15px;
+    font-size:14px;
+    color:#b4b4b4;
+    vertical-align:bottom;
+    margin-right:3%;
+    cursor:pointer;
+}
+#center_box .product_new_box .product_new_box_detail{
+    width: 100%;
+    margin-top:10px;
+    float:left;
+}
+
+#center_box .product_new_box .product_new_box_detail .product_detail{
+    width: 16vw;
+    height:27vw;
+    float:left;
+    padding:0;
+    margin:0.9vw 0 0.1vw 0.9vw;
+    list-style-type : none;
+    font-size:0.7vw;
+}
+.thumbnail_box{
+    overflow:hidden;
+    height:65%;
+    border:none;
+}
+.thumbnail_box .thumbnail_picture{
+    width:100%;
+    height:100%;
+    border-radius: 5px;
+}
+.thumbnail_box .thumbnail_picture:hover{
+    border:2px hotpink solid;
+}
+.shop_name{
+    margin-top:2%;
+    float:left;
+    width:100%;
+    padding-left:5px;
+    margin-bottom:3%;
+    overflow:hidden;
+    font-size:0.8vw;
+    font-weight:bold;
+}
+.product_name{
+    float:left;
+    width:100%;
+    padding-left:5px;
+    margin-bottom:5%;
+    overflow:hidden;
+    cursor:pointer;
+    white-space:pre;
+}
+.product_name:hover{
+    color:darkgrey;
+}
+.product_price{
+    float:left;
+    padding-left:5px;
+    font-size:1vw;
+}
+.product_like{
+    margin-right:5px;
+    background-image:url("../web/icon/heart1.png");
+    background-size:100% 100%;
+    width:1.7vw;
+    height:1.7vw;
+    float:right;
+    cursor:pointer;
+}
+.product_like:hover{
+    background-image:url("../web/icon/heart2.png");
+}
+.center_line{
+    float:left;
+    width:90%;
+    height:1px;
+    margin-left:5%;
+    margin-top:5%;
+    margin-bottom:5%;
+    border-bottom:1px #dcdcdc solid;
+}
+#footer{
+    float:left;
+    width:100%;
+}
+#header{
+    float:left;
+    width:100%;
+}
+#product_center_box{
+
+}
+
+
+
+
+
+
+
+
+
