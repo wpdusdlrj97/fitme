@@ -1,0 +1,231 @@
+body {
+    font-family: 'Noto Sans KR', sans-serif;
+}
+#footer{
+    float:left;
+    width:100%;
+}
+#header{
+    float:left;
+    width:100%;
+}
+#category_line{
+    width:90%;
+    margin:100px 5% 30px 5%;
+    float:left;
+}
+#category_left_box{
+    float:left;
+    margin-left:6%;
+    margin-top:30px;
+    width:14%;
+}
+#category_right_box{
+    float:left;
+    margin-top:30px;
+    margin-left:2%;
+    width:72%;
+}
+.categories_title{
+    width:80%;
+    float:left;
+    font-size:1.5vw;
+    height:80px;
+    line-height:80px;
+    margin-left:10%;
+    padding:0 0 0 10px;
+    font-weight: bold;
+}
+.categories_contents{
+    border-top:1px grey solid;
+    line-height:80px;
+    width:80%;
+    height:80px;
+    float:left;
+    font-size:0.8vw;
+    margin-left:10%;
+    padding:0 0 0 10px;
+    cursor:pointer;
+}
+.categories_contents_text{
+    float:left;
+    font-weight: bolder;
+}
+.categories_more{
+    float:right;
+    margin-top:25px;
+    width:30px;
+    height:30px;
+    background-image:url("../web/icon/expand.png");
+    background-size:100% 100%;
+}
+#category_left_box .categories_contents_detail{
+    float:left;
+    width:100%;
+    display:none;
+}
+.add_category{
+    float:left;
+    width:83%;
+    margin-left:17%;
+    height:30px;
+    margin-bottom:5px;
+    line-height: 30px;
+    cursor:pointer;
+}
+.add_category:hover{
+    color:#646464;
+}
+.category_right_title{
+    margin-top:10px;
+    font-size:30px;
+    text-align: center;
+    width:100%;
+    float:left;
+}
+.category_right_option_box{
+    width:100%;
+    margin-top:50px;
+    height:60px;
+    float:left;
+}
+#checkbox_box{
+    height:60px;
+    float:left;
+    margin-left:3%;
+}
+#checkbox_box input{
+    width:25px;
+    height:25px;
+    margin-top:15px;
+}
+#checkbox_box label{
+    font-size:17px;
+    margin-left:10px;
+    vertical-align:7px;
+}
+.right_box_option_select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    float:right;
+    width: 150px;
+    height:40px;
+    margin-right:5%;
+    margin-top:10px;
+    padding-left:10px;
+    background: url(https://farm1.staticflickr.com/379/19928272501_4ef877c265_t.jpg) no-repeat 95% 50%;
+    border: 1px solid #999;
+    border-radius: 5px;
+}
+select::-ms-expand {
+    display: none;
+}
+.product_list{
+    width:95%;
+    margin-left:3%;
+    float:left;
+}
+.category_product_detail_box{
+    width:22%;
+    height:25vw;
+    margin-left:2%;
+    margin-top:2%;
+    float:left;
+    padding:0;
+    overflow:hidden;
+}
+.category_product_detail_box .category_thumbnail_box{
+    overflow:hidden;
+    float:left;
+    width:100%;
+    height:66%;
+    margin:0;
+    padding:0;
+}
+.category_product_detail_box .category_thumbnail_picture{
+    width:100%;
+    height:100%;
+    border-radius: 5px;
+}
+.category_product_detail_box .category_thumbnail_picture:hover{
+    border:2px hotpink solid;
+    cursor:pointer;
+}
+.category_shop_name, .category_product_name, .category_product_price{
+    padding:0;
+    list-style-type : none;
+}
+.category_shop_name{
+    font-size:1.2vw;
+    float:left;
+    width:100%;
+    margin-left:3%;
+    margin-top:1%;
+    font-weight: bold;
+}
+.category_product_name{
+    font-size:0.7vw;
+    float:left;
+    width:100%;
+    margin-left:1%;
+    margin-top:1%;
+    white-space:pre;
+    cursor:pointer;
+    color:black;
+}
+.category_product_price{
+    font-size:1.3vw;
+    float:left;
+    width:100%;
+    margin-left:3%;
+    margin-top:1%;
+}
+.category_product_name a{
+    color:black;
+}
+.add_category a{
+    color:black;
+}
+.add_category a:hover{
+    text-decoration:none;
+    font-weight:bold;
+}
+.categories_contents_text a{
+    color:black;
+}
+.categories_contents_text a:hover{
+    text-decoration:none;
+    color:darkgrey;
+    font-weight:bold;
+}
+.categories_contents_detail .add_category{
+    color:red;
+    text-decoration:none;
+}
+.category_product_name a:hover{
+    color:darkgrey;
+    text-decoration:none;
+    font-weight:bold;
+}
+.category_center_footer{
+    float:left;
+    width:100%;
+    margin:50px 0px 50px 0px;
+    height:1px;
+}
+.category_pagination{
+    float:left;
+    width:100%;
+    margin-top:20px;
+    text-align: center;
+}
+.nope_product{
+    width:100%;
+    height:300px;
+    margin-top:20px;
+    text-align: center;
+    line-height:300px;
+    font-size:35px;
+    font-weight:bold;
+}
