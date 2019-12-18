@@ -53,11 +53,15 @@
     <property name="WebServerToolWindowPanel.toolwindow.show.date" value="false" />
     <property name="WebServerToolWindowPanel.toolwindow.show.permissions" value="false" />
     <property name="WebServerToolWindowPanel.toolwindow.show.size" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
-    <property name="settings.editor.selected.configurable" value="reference.settingsdialog.IDE.editor.colors.Color Scheme Font" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/admin/assets/img" />
+    <property name="settings.editor.selected.configurable" value="preferences.keymap" />
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\wpdus\PhpstormProjects\fitme\admin\assets\img" />
+      <recent name="C:\Users\wpdus\PhpstormProjects\fitme\admin" />
+      <recent name="C:\Users\wpdus\PhpstormProjects\fitme\admin\img" />
+      <recent name="C:\Users\wpdus\PhpstormProjects\fitme\admin\img\svg" />
       <recent name="C:\Users\wpdus\PhpstormProjects\fitme" />
     </key>
   </component>
@@ -87,7 +91,7 @@
       <workItem from="1575879702278" duration="921000" />
       <workItem from="1575881181655" duration="68947000" />
       <workItem from="1576231909589" duration="35111000" />
-      <workItem from="1576499084409" duration="12583000" />
+      <workItem from="1576499084409" duration="24580000" />
     </task>
     <task id="LOCAL-00001" summary="20191217">
       <created>1576570220752</created>
@@ -96,7 +100,14 @@
       <option name="project" value="LOCAL" />
       <updated>1576570220752</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="20191217">
+      <created>1576571121382</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1576571121382</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -123,10 +134,14 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="691" y="356" key="#com.intellij.ide.actions.ChooseComponentsToExportDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1576569585007" />
-    <state x="577" y="25" key="CommitChangelistDialog2" timestamp="1576571054021">
+    <state x="690" y="266" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog" timestamp="1576579518832">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="577" y="25" key="CommitChangelistDialog2/0.0.1920.1040@0.0.1920.1040" timestamp="1576571054021" />
+    <state x="690" y="266" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1576579518832" />
+    <state x="577" y="25" key="CommitChangelistDialog2" timestamp="1576571120518">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="577" y="25" key="CommitChangelistDialog2/0.0.1920.1040@0.0.1920.1040" timestamp="1576571120518" />
     <state x="74" y="37" width="1736" height="856" maximized="true" key="DiffContextDialog" timestamp="1576570774439">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
@@ -143,14 +158,14 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="768" y="140" key="Github.UntrackedFilesDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1576569685704" />
-    <state x="554" y="0" width="1366" height="1040" key="SettingsEditor" timestamp="1575879919898">
+    <state x="336" y="0" width="1366" height="1040" key="SettingsEditor" timestamp="1576575341620">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="554" y="0" width="1366" height="1040" key="SettingsEditor/0.0.1920.1040@0.0.1920.1040" timestamp="1575879919898" />
-    <state x="552" y="248" key="Vcs.Push.Dialog.v2" timestamp="1576570046721">
+    <state x="336" y="0" width="1366" height="1040" key="SettingsEditor/0.0.1920.1040@0.0.1920.1040" timestamp="1576575341620" />
+    <state x="552" y="248" key="Vcs.Push.Dialog.v2" timestamp="1576574974319">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="552" y="248" key="Vcs.Push.Dialog.v2/0.0.1920.1040@0.0.1920.1040" timestamp="1576570046721" />
+    <state x="552" y="248" key="Vcs.Push.Dialog.v2/0.0.1920.1040@0.0.1920.1040" timestamp="1576574974319" />
     <state x="46" y="102" width="1736" height="856" key="com.intellij.history.integration.ui.views.DirectoryHistoryDialog" timestamp="1576570522336">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
