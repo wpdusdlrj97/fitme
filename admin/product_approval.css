@@ -1,0 +1,313 @@
+::-webkit-scrollbar{width:13px; position:absolute;}
+::-webkit-scrollbar-thumb{background-color:#c8c8c8; border-radius:5px;}
+::-webkit-scrollbar-thumb:hover{background:#555;}
+::-webkit-scrollbar-button { display: none; }
+
+ul li {list-style:none; }
+.product_key, .product_price{
+    float:left;
+    width:10%;
+    border-right:1px #BDBDBD solid;
+}
+.shop_name, .product_name{
+    float:left;
+    width:20%;
+    border-right:1px #BDBDBD solid;
+}
+.product_category1, .product_category2{
+    float:left;
+    width:15%;
+    border-right:1px #BDBDBD solid;
+}
+.product_stock{
+    float:left;
+    width:10%;
+}
+.content_box_table_name{
+    border-bottom:1px #D8D8D8 solid;
+    background-color:#D8D8D8;
+    height:50px;
+    float:left;
+    width:100%;
+    padding:0;
+    line-height:50px;
+    text-align: center;
+    color:black;
+    font-weight:bold;
+}
+.approval_product_box{
+    border-top:1px #D8D8D8 solid;
+    border-bottom:1px #D8D8D8 solid;
+    float:left;
+    width:100%;
+    height:70px;
+    padding:0;
+    line-height:70px;
+    text-align: center;
+    color:black;
+    font-weight:bold;
+    cursor:pointer;
+}
+.approval_product_box:hover{
+    background-color:#F2F2F2;
+}
+.approval_product_key, .approval_product_price{
+    float:left;
+    width:10%;
+}
+.approval_shop_name, .approval_product_name{
+    float:left;
+    width:20%;
+}
+.approval_product_category1, .approval_product_category2{
+    float:left;
+    width:15%;
+}
+.approval_product_stock{
+    float:left;
+    width:10%;
+}
+.product_top{
+    float:left;
+    width:98%;
+    margin-left:1%;
+    max-height:600px;
+    border:1px #D8D8D8 solid;
+    overflow-y:auto;
+}
+.product_content_box{
+    border-top:1px grey solid;
+    float:left;
+    width:98%;
+    margin-left:1%;
+    margin-top:100px;
+}
+.left_box{
+    float:left;
+    width:20%;
+}
+.product_content_box_shop_name{
+    float:left;
+    font-size:21px;
+    width:100%;
+    margin-top:20px;
+    padding-left:20px;
+    font-weight:bold
+}
+.product_content_box_product_name{
+    float:left;
+    font-size:15px;
+    width:100%;
+    margin-top:30px;
+    padding-left:20px;
+    color:grey
+}
+.product_width_box1, .product_width_box2{
+    width:100%;
+    float:left;
+    margin-top:40px;
+}
+.product_content_box_image_download{
+    float:left;
+    margin-top:20px;
+    margin-left:20px;
+    text-align: center;
+    width:180px;
+    height:60px;
+    display: inline-block;
+    color: white;
+    font-size: 18px;
+    line-height: 60px;
+    background-color: #BDBDBD;
+    cursor: pointer;
+    border: 1px solid #A4A4A4;
+    border-radius: .25em;
+
+}
+.product_content_box_image_download:hover{
+    background-color: #A4A4A4;
+}
+.product_width_box2 label {
+    width:180px;
+    margin-left:20px;
+    height:60px;
+    display: inline-block;
+    color: white;
+    font-size: 18px;
+    line-height: 60px;
+    text-align: center;
+    background-color: #BDBDBD;
+    cursor: pointer;
+    border: 1px solid #A4A4A4;
+    border-radius: .25em;
+}
+.product_width_box2 label:hover {
+    background-color: #A4A4A4;
+}
+.product_width_box2 label:active {
+    background-color: #BDBDBD;
+}
+.product_width_box2 input[type="file"] {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    border: 0;
+}
+.default_image_box{
+    float:left;
+    width:75%;
+    margin-left:10px;
+    margin-top:30px;
+}
+.default_image_object_box{
+    width:40%;
+    float:left;
+    margin-left:2%;
+}
+.default_image_object_box2{
+    width:40%;
+    float:left;
+    margin-left:2%;
+    display:none;
+}
+.default_image_text{
+    background-color:#140718;
+    line-height:40px;
+    height:40px;
+    text-align:center;
+    color:white;
+}
+
+.default_image, .change_image{
+    background-color:#D8D8D8;
+    border:1px #140718 solid;
+    width:100%;
+    float:left;
+}
+#default_image_line_box, #change_image_line_box{
+    width:100%;
+    float:left;
+}
+
+.cont_radio{
+    display: block;
+    position: relative;
+    margin-left: 20px;
+    height: auto;
+    float:left;
+}
+
+.cont_radio ul{
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    overflow: auto;
+}
+
+.cont_radio ul li{
+    color: #AAAAAA;
+    display: block;
+    position: relative;
+    float: left;
+    width: 100%;
+    height: 70px;
+}
+
+.cont_radio ul li input[type=radio]{
+    position: absolute;
+    visibility: hidden;
+}
+
+.cont_radio ul li label{
+    display: block;
+    position: relative;
+    font-weight: 300;
+    font-size: 15px;
+    padding: 25px 25px 25px 80px;
+    margin: 10px auto;
+    height: 20px;
+    z-index: 9;
+    cursor: pointer;
+    -webkit-transition: all 0.25s linear;
+}
+
+.cont_radio ul li:hover label{
+    color: black;
+}
+
+.cont_radio ul li .check{
+    display: block;
+    position: absolute;
+    border: 5px solid #AAAAAA;
+    border-radius: 100%;
+    height: 22px;
+    width: 22px;
+    top: 40px;
+    left: 20px;
+    z-index: 5;
+    transition: border .25s linear;
+    -webkit-transition: border .25s linear;
+}
+
+.cont_radio ul li:hover .check {
+    border: 5px solid black;
+}
+
+.cont_radio ul li .check::before {
+    display: block;
+    position: absolute;
+    content: '';
+    border-radius: 100%;
+    height: 15px;
+    width: 15px;
+    top: -2px;
+    left: -2px;
+    margin: auto;
+    transition: background 0.25s linear;
+    -webkit-transition: background 0.25s linear;
+}
+
+.cont_radio input[type=radio]:checked ~ .check {
+    border: 5px solid #0489B1;
+}
+
+.cont_radio input[type=radio]:checked ~ .check::before{
+    background: #0489B1;
+}
+
+.cont_radio input[type=radio]:checked ~ label{
+    color: #0489B1;
+    font-weight:bold;
+}
+.bottom_place{
+    height:70px;
+    float:left;
+    width:100%;
+}
+.approval_s_button, .approval_f_button{
+    background-color:#1C1C1C;
+    color:white;
+    border-radius:7px;
+    width:15%;
+    line-height:60px;
+    font-size:20px;
+    height:60px;
+    cursor:pointer;
+    text-align:center;
+}
+.approval_s_button:hover, .approval_f_button:hover{
+    border-top:2px #A4A4A4 solid;
+    border-left:2px #A4A4A4 solid;
+}
+.approval_s_button{
+    margin-left:20%;
+    float:left;
+}
+.approval_f_button{
+    margin-right:20%;
+    float:right;
+}

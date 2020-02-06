@@ -1,0 +1,189 @@
+<!doctype html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<title>Editor</title>
+	<link rel="stylesheet" href="http://49.247.136.36/shop/daumeditor/css/editor.css" type="text/css" charset="utf-8"/>
+	<script src="http://49.247.136.36/shop/daumeditor/js/editor_loader.js?environment=development" type="text/javascript" charset="utf-8"></script>
+	<style>
+		::-webkit-scrollbar{width:13px; position:absolute;}
+		::-webkit-scrollbar-thumb{background-color:#c8c8c8; border-radius:5px;}
+		::-webkit-scrollbar-thumb:hover{background:#555;}
+		::-webkit-scrollbar-button { display: none; }
+	</style>
+</head>
+<body>
+<div class="body">
+	<div id="tx_trex_container" class="tx-editor-container">
+		<div id="tx_sidebar" class="tx-sidebar">
+			<div class="tx-sidebar-boundary">
+				<ul class="tx-bar tx-bar-left tx-nav-attach">
+					<li class="tx-list">
+						<div unselectable="on" id="tx_image" class="tx-image tx-btn-trans">
+							<a href="javascript:;" title="사진" class="tx-text">사진</a>
+						</div>
+					</li>
+				</ul>
+				<ul class="tx-bar tx-bar-right tx-nav-opt">
+					<li class="tx-list">
+						<div unselectable="on" class="tx-switchtoggle" id="tx_switchertoggle">
+							<a href="javascript:;" title="에디터 타입">에디터</a>
+						</div>
+					</li>
+				</ul>
+			</div>
+		</div>
+		<div id="tx_toolbar_basic" class="tx-toolbar tx-toolbar-basic"><div class="tx-toolbar-boundary">
+			<ul class="tx-bar tx-bar-left">
+				<li class="tx-list">
+					<div id="tx_fontfamily" unselectable="on" class="tx-slt-70bg tx-fontfamily">
+						<a href="javascript:;" title="글꼴">굴림</a>
+					</div>
+					<div id="tx_fontfamily_menu" class="tx-fontfamily-menu tx-menu" unselectable="on"></div>
+				</li>
+			</ul>
+			<ul class="tx-bar tx-bar-left">
+				<li class="tx-list">
+					<div unselectable="on" class="tx-slt-42bg tx-fontsize" id="tx_fontsize">
+						<a href="javascript:;" title="글자크기">9pt</a>
+					</div>
+					<div id="tx_fontsize_menu" class="tx-fontsize-menu tx-menu" unselectable="on"></div>
+				</li>
+			</ul>
+			<ul class="tx-bar tx-bar-left tx-group-font">
+
+				<li class="tx-list">
+					<div unselectable="on" class="		 tx-btn-lbg 	tx-bold" id="tx_bold">
+						<a href="javascript:;" class="tx-icon" title="굵게 (Ctrl+B)">굵게</a>
+					</div>
+				</li>
+				<li class="tx-list">
+					<div unselectable="on" class="		 tx-btn-bg 	tx-underline" id="tx_underline">
+						<a href="javascript:;" class="tx-icon" title="밑줄 (Ctrl+U)">밑줄</a>
+					</div>
+				</li>
+				<li class="tx-list">
+					<div unselectable="on" class="		 tx-btn-bg 	tx-italic" id="tx_italic">
+						<a href="javascript:;" class="tx-icon" title="기울임 (Ctrl+I)">기울임</a>
+					</div>
+				</li>
+				<li class="tx-list">
+					<div unselectable="on" class="		 tx-btn-bg 	tx-strike" id="tx_strike">
+						<a href="javascript:;" class="tx-icon" title="취소선 (Ctrl+D)">취소선</a>
+					</div>
+				</li>
+				<li class="tx-list">
+					<div unselectable="on" class="		 tx-slt-tbg 	tx-forecolor" id="tx_forecolor">
+						<a href="javascript:;" class="tx-icon" title="글자색">글자색</a>
+						<a href="javascript:;" class="tx-arrow" title="글자색 선택">글자색 선택</a>
+					</div>
+					<div id="tx_forecolor_menu" class="tx-menu tx-forecolor-menu tx-colorpallete"
+						 unselectable="on"></div>
+				</li>
+			</ul>
+			<ul class="tx-bar tx-bar-left tx-group-align">
+				<li class="tx-list">
+					<div unselectable="on" class="		 tx-btn-lbg 	tx-alignleft" id="tx_alignleft">
+						<a href="javascript:;" class="tx-icon" title="왼쪽정렬 (Ctrl+,)">왼쪽정렬</a>
+					</div>
+				</li>
+				<li class="tx-list">
+					<div unselectable="on" class="		 tx-btn-bg 	tx-aligncenter" id="tx_aligncenter">
+						<a href="javascript:;" class="tx-icon" title="가운데정렬 (Ctrl+.)">가운데정렬</a>
+					</div>
+				</li>
+				<li class="tx-list">
+					<div unselectable="on" class="		 tx-btn-bg 	tx-alignright" id="tx_alignright">
+						<a href="javascript:;" class="tx-icon" title="오른쪽정렬 (Ctrl+/)">오른쪽정렬</a>
+					</div>
+				</li>
+			</ul>
+			<ul class="tx-bar tx-bar-left tx-group-etc">
+				<li class="tx-list">
+					<div unselectable="on" class="		 tx-btn-bg 	tx-specialchar" id="tx_specialchar">
+						<a href="javascript:;" class="tx-icon" title="특수문자">특수문자</a>
+					</div>
+					<div id="tx_specialchar_menu" class="tx-specialchar-menu tx-menu"></div>
+				</li>
+			</ul>
+		</div>
+		</div>
+		<div id="tx_canvas" class="tx-canvas" style="width:100%; height:810px;">
+			<div id="tx_loading" class="tx-loading"><div><img src="http://49.247.136.36/shop/daumeditor/images/icon/editor/loading2.png" width="113" height="21" align="absmiddle"/></div></div>
+			<div id="tx_canvas_wysiwyg_holder" class="tx-holder" style="display:block; width:100%; height:810px;">
+				<iframe id="tx_canvas_wysiwyg" name="tx_canvas_wysiwyg" allowtransparency="true" frameborder="0"></iframe>
+			</div>
+			<div class="tx-source-deco">
+				<div id="tx_canvas_source_holder" class="tx-holder">
+					<textarea id="tx_canvas_source" rows="30" cols="30"></textarea>
+				</div>
+			</div>
+			<div id="tx_canvas_text_holder" class="tx-holder" style="border:1px red solid;">
+				<textarea id="tx_canvas_text" rows="30" cols="30"></textarea>
+			</div>
+		</div>
+		<div id="tx_attach_div" class="tx-attach-div" style="float:left; width:100%;">
+			<div id="tx_attach_txt" class="tx-attach-txt">파일 첨부</div>
+			<div id="tx_attach_box" class="tx-attach-box">
+				<div class="tx-attach-box-inner">
+					<div id="tx_attach_preview" class="tx-attach-preview"><p></p><img src="http://49.247.136.36/shop/daumeditor/images/icon/editor/pn_preview.gif" width="147" height="108" unselectable="on"/></div>
+					<div class="tx-attach-main">
+						<div id="tx_upload_progress" class="tx-upload-progress"><div>0%</div><p>파일을 업로드하는 중입니다.</p></div>
+						<ul class="tx-attach-top">
+							<li id="tx_attach_delete" class="tx-attach-delete"><a>전체삭제</a></li>
+							<li id="tx_attach_size" class="tx-attach-size">
+								파일: <span id="tx_attach_up_size" class="tx-attach-size-up"></span>/<span id="tx_attach_max_size"></span>
+							</li>
+							<li id="tx_attach_tools" class="tx-attach-tools">
+							</li>
+						</ul>
+						<ul id="tx_attach_list" class="tx-attach-list"></ul>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- 에디터 끝 -->
+<script type="text/javascript">
+	var config = {
+		txHost: '', /* 런타임 시 리소스들을 로딩할 때 필요한 부분으로, 경로가 변경되면 이 부분 수정이 필요. ex) http://xxx.xxx.com */
+		txPath: '', /* 런타임 시 리소스들을 로딩할 때 필요한 부분으로, 경로가 변경되면 이 부분 수정이 필요. ex) /xxx/xxx/ */
+		txService: 'sample', /* 수정필요없음. */
+		txProject: 'sample', /* 수정필요없음. 프로젝트가 여러개일 경우만 수정한다. */
+		initializedId: "", /* 대부분의 경우에 빈문자열 */
+		wrapper: "tx_trex_container", /* 에디터를 둘러싸고 있는 레이어 이름(에디터 컨테이너) */
+		form: 'tx_editor_form'+"", /* 등록하기 위한 Form 이름 */
+		txIconPath: "http://49.247.136.36/shop/daumeditor/images/icon/editor/", /*에디터에 사용되는 이미지 디렉터리, 필요에 따라 수정한다. */
+		txDecoPath: "http://49.247.136.36/shop/daumeditor/images/deco/contents/", /*본문에 사용되는 이미지 디렉터리, 서비스에서 사용할 때는 완성된 컨텐츠로 배포되기 위해 절대경로로 수정한다. */
+		canvas: {
+			initHeight:800,
+			styles: {
+				color: "#123456", /* 기본 글자색 */
+				fontFamily: "굴림", /* 기본 글자체 */
+				fontSize: "10pt", /* 기본 글자크기 */
+				backgroundColor: "#fff", /*기본 배경색 */
+				lineHeight: "1.5", /*기본 줄간격 */
+				padding: "8px", /* 위지윅 영역의 여백 */
+			},
+			showGuideArea: false
+		},
+		events: {
+			preventUnload: false
+		},
+		sidebar: {
+			capacity:{maximum: 10145728, available:10145728 },
+			attachbox: {
+				show: true,
+				confirmForDeleteAll: true
+			}
+		},
+		size: {
+		}
+	};
+	EditorJSLoader.ready(function(Editor) {
+		var editor = new Editor(config);
+	});
+</script>
+</body>
+</html>
