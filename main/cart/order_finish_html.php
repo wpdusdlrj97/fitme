@@ -1,3 +1,54 @@
+<?php
+session_start();
+$connect = mysqli_connect('localhost', 'FunIdeaDBUser', '*TeamNova2019*', 'FitMe');
+mysqli_set_charset($connect, 'utf8');
+
+$id = $_SESSION['id'];
+$email = $_SESSION['email'];
+
+$order_number = $_GET['order_number'];
+
+if (!$id) //현재 로그인이 안된 경우에는 로그인 페이지로 되돌려야한다.
+{
+
+
+    // 로그인이 안되었을 경우에는 상품페이지로 이동한다
+    $_SESSION['URL'] = 'http://49.247.136.36/main/cart/order_finish_html.php';
+
+    $state = 'xyz';
+    // 세션 또는 별도의 저장 공간에 상태 토큰을 저장
+    $_SESSION['state'] = $state;
+
+    echo '<script>location.href=\'http://15.165.80.29/oauth/authorize?client_id=ddb9468d-313f-42d7-a584-f7dd91696040&response_type=code&scope=read&state=xyz\'</script>'; //로그인 페이지로 이동한다.
+
+}
+
+
+
+//주문 상품 나열
+$query_product = "SELECT * FROM order_success_product where order_number='$order_number'";
+$result_product = mysqli_query($connect, $query_product);
+
+
+
+//주문관련 정보
+$query_information = "SELECT * FROM order_success where order_number='$order_number'";
+$result_information = mysqli_query($connect, $query_information);
+$row_information = mysqli_fetch_assoc($result_information);
+
+if($id!=$row_information['user_id']){
+
+    echo '<script>alert("접근 불가");</script>';
+
+    echo '<script>location.href=\'http://49.247.136.36/main/main.php\'</script>'; //로그인 페이지로 이동한다.
+
+}
+
+
+?>
+
+
+
 <html>
 
 <style>
@@ -259,9 +310,28 @@
                         <span style="font-size: 12px;  color: black; display:inline-block; margin-left: 15px;">주문내역 및 배송에 관한 안내는 주문조회를 통해 확인 가능합니다</span>
 
                         <br><br>
-                        <span style="font-size: 12px;  color: black; display:inline-block; margin-left: 15px;"> 주문번호 : 20191227-0001358</span>
+                        <span style="font-size: 12px;  color: black; display:inline-block; margin-left: 15px;"> 주문번호 : <?php echo $order_number;?></span>
                         <br>
-                        <span style="font-size: 12px;  color: black; display:inline-block; margin-left: 15px;"> 주문일자 : 2019-12-27 21:36:47</span>
+                        <span style="font-size: 12px;  color: black; display:inline-block; margin-left: 15px;"> 주문일자 :
+                            <?php
+
+                            $order_date = $row_information['order_date'];
+
+                            echo substr($order_date, 0, 4);
+                            echo "-";
+                            echo substr($order_date, 4, 2);
+                            echo "-";
+                            echo substr($order_date, 6, 2);
+                            echo " ";
+                            echo substr($order_date, 8, 2);
+                            echo ":";
+                            echo substr($order_date, 10, 2);
+                            echo ":";
+                            echo substr($order_date, 12, 2);
+
+                            ?>
+
+                        </span>
 
 
                     </div>
@@ -298,11 +368,11 @@
                         <th> <span style="font-size: 12px; color: black; padding:1px; margin-top: 10px; margin-bottom: 10px; display:inline-block;">이미지</span></th>
                         <th><span style="font-size: 12px; color: black; padding:1px; display:inline-block;">상품명/옵션</span></th>
                         <th><span style="font-size: 12px; color: black; padding:1px; display:inline-block;">판매가</span></th>
-                        <th id="th_delete"><span  style="font-size: 12px; color: black; padding:1px; display:inline-block;">수량</span></th>
+                        <th><span  style="font-size: 12px; color: black; padding:1px; display:inline-block;">수량</span></th>
                         <th id="th_delete"><span  style="font-size: 12px; color: black; padding:1px; display:inline-block;">적립금</span></th>
                         <th id="th_delete"><span  style="font-size: 12px; color: black; padding:1px; display:inline-block;">배송구분</span></th>
                         <th id="th_delete"><span  style="font-size: 12px; color: black; padding:1px; display:inline-block;">배송비</span></th>
-                        <th id="th_delete"><span style="font-size: 12px; color: black; padding:1px; display:inline-block;">합계</span></th>
+                        <th ><span style="font-size: 12px; color: black; padding:1px; display:inline-block;">합계</span></th>
 
 
                     </tr>
@@ -310,61 +380,79 @@
 
                     <tbody style="border-bottom: 1px solid #ddd;">
 
+                    <?php
+
+                    //상품 구매금액
+                    $order_finish_amount=0;
+
+                    //배송비
+                    $order_finish_delivery=0 ;
+
+
+
+
+                    while ($rows = mysqli_fetch_assoc($result_product)) { //DB에 저장된 데이터 수 (열 기준)
+
+
+                    //주문상품번호
+                    $order_product_number = $rows['order_product_number'];
+                    //해당 상품 키
+                    $order_product_key = $rows['product_key'];
+                    //해당 상품 색상,사이즈,수량
+                    $order_product_color = $rows['product_color'];
+                    $order_product_size = $rows['product_size'];
+                    $order_product_count = $rows['product_count'];
+
+                    //시간 순으로 정렬하기
+                    $query_information_key = "SELECT * FROM product where product_key='$order_product_key'";
+                    $result_information_key = mysqli_query($connect, $query_information_key);
+                    $row_information_key = mysqli_fetch_assoc($result_information_key);
+
+
+                    //해당상품 이미지
+                    $order_product_image = $row_information_key['main_image'];
+                    //해당상품 이름
+                    $order_product_name = $row_information_key['name'];
+                    //해당상품 가격
+                    $order_product_amount = $row_information_key['price'];
+
+
+
+                    //상품 적립금
+                    $one_percent=100;
+                    $order_product_save=$order_product_amount*$order_product_count/$one_percent;
+                    //상품 합계
+                    $order_product_amount_all=$order_product_amount*$order_product_count;
+
+                    $order_finish_amount=$order_finish_amount+$order_product_amount_all;
+
+
+
+                    ?>
+
                     <td width="10%" align="center"><img
-                            src="http://49.247.136.36/product_resource/image/main/yohan@gmail.com20191220211834_main.jpg"
+                            src="<?php echo $order_product_image; ?>"
                             alt="My Image" width="90" height="90" style="margin-top:15px; margin-bottom: 15px;"></td>
-                    <td width="30%" align="center"><span style="font-size: 12px; color: black; padding:1px; display:inline-block;"><?php echo '메모리 MA-1 항공점퍼3colors'; ?><br>
-                                <?php echo '[옵션 - Black, L]'; ?></span></td>
-                    <td width="5%" align="center"><span style="font-size: 12px; color: black; padding:1px; display:inline-block;"><?php echo '81,000원'; ?></span></td>
-                    <td id="td_delete" width="5%" align="center"><span  style="font-size: 12px; color: black; padding:1px; display:inline-block;"><?php echo '1'; ?></span></td>
-                    <td id="td_delete" width="5%" align="center"><span  style="font-size: 12px; color: black; padding:1px; display:inline-block;"><?php echo '810원'; ?></span></td>
+                    <td width="25%" align="center"><span style="font-size: 12px; color: black; padding:1px; display:inline-block;"><?php echo $order_product_name; ?><br>
+                                <?php echo '[옵션 - '.$order_product_color.','.$order_product_size.']'; ?></span></td>
+                    <td width="5%" align="center"><span style="font-size: 12px; color: black; padding:1px; display:inline-block;"><?php echo number_format($order_product_amount); ?></span></td>
+                    <td width="5%" align="center"><span  style="font-size: 12px; color: black; padding:1px; display:inline-block;"><?php echo $order_product_count; ?></span></td>
+                    <td id="td_delete" width="5%" align="center"><span  style="font-size: 12px; color: black; padding:1px; display:inline-block;"><?php echo $order_product_save; ?></span></td>
                     <td id="td_delete" width="5%" align="center"><span  style="font-size: 12px; color: black; padding:1px; display:inline-block;"><?php echo '기본배송'; ?></span></td>
                     <td id="td_delete" width="5%" align="center"><span  style="font-size: 12px; color: black; padding:1px; display:inline-block;"><?php echo '무료'; ?></span></td>
-                    <td id="td_delete" width="5%" align="center"><span style="font-size: 12px; color: black; padding:1px; display:inline-block;"><?php echo '81,000원'; ?></span></td>
+                    <td  width="5%" align="center"><span style="font-size: 12px; color: black; padding:1px; display:inline-block;"><?php echo number_format($order_product_amount*$order_product_count); ?></span></td>
 
                     </tbody>
 
-                    <tbody style="border-bottom: 1px solid #ddd;">
+                    <?php
 
-                    <td width="10%" align="center"><img
-                            src="http://49.247.136.36/product_resource/image/main/yohan@gmail.com20191220180341_main.jpg"
-                            alt="My Image" width="90" height="90" style="margin-top:15px; margin-bottom: 15px;"></td>
-                    <td width="30%" align="center"><span style="font-size: 12px; color: black; padding:1px; display:inline-block;"><?php echo 'Tydi Crop Jeans'; ?><br>
-                                <?php echo '[옵션 - Black, 30]'; ?></span></td>
-                    <td width="5%" align="center"><span style="font-size: 12px; color: black; padding:1px; display:inline-block;"><?php echo '96,000원'; ?></span></td>
-                    <td id="td_delete" width="5%" align="center"><span  style="font-size: 12px; color: black; padding:1px; display:inline-block;"><?php echo '1'; ?></span></td>
-                    <td id="td_delete" width="5%" align="center"><span  style="font-size: 12px; color: black; padding:1px; display:inline-block;"><?php echo '960원'; ?></span></td>
-                    <td id="td_delete" width="5%" align="center"><span  style="font-size: 12px; color: black; padding:1px; display:inline-block;"><?php echo '기본배송'; ?></span></td>
-                    <td id="td_delete" width="5%" align="center"><span  style="font-size: 12px; color: black; padding:1px; display:inline-block;"><?php echo '무료'; ?></span></td>
-                    <td id="td_delete" width="5%" align="center"><span style="font-size: 12px; color: black; padding:1px; display:inline-block;"><?php echo '96,000원'; ?></span></td>
+                    }
 
-                    </tbody>
-
-
+                    ?>
 
 
                     </table>
 
-
-
-                </div>
-
-                <div id="table_box4" style="text-align: end">
-
-
-                    <span style="font-size: 12px; color: black; padding:1px; margin-top: 10px; margin-bottom: 10px; display:inline-block;">상품구매금액</span>
-
-                    <span style="font-size: 12px; color: black; padding:1px; display:inline-block;">177,000</span>
-
-                    <span style="font-size: 12px; color: black; padding:1px; display:inline-block;">+ 배송비</span>
-
-                    <span style="font-size: 12px; color: black; padding:1px; display:inline-block;">2500</span>
-
-                    <span style="font-size: 12px; color: black; padding:1px; display:inline-block;"> = 합계 :</span>
-
-                    <span style="font-size: 14px; font-weight: bold; color: black; padding:1px; display:inline-block;"> 177,000</span>
-
-                    <span style="font-size: 12px; color: black; padding:1px; display:inline-block;"> 원</span>
 
 
                 </div>
@@ -377,64 +465,50 @@
             <div id="margin_box">
 
             </div>
+            <div id="margin_box">
+
+            </div>
 
             <div id="table_box_payment">
 
                 <div id="table_box_payment1">
 
-                    <span style="font-size: 12px; font-weight: bold; color: black; padding:5px; display:inline-block; margin-left: 10px;">결제 금액</span>
+                    <span style="font-size: 12px; font-weight: bold; color: black; padding:5px; display:inline-block; margin-left: 10px;">결제 정보</span>
 
 
                 </div>
-                <div id="table_box_payment2">
 
-                    <div id="table_box_payment2_1">
+                <div id="table_box_address2">
 
-                        <span style="font-size: 12px; font-weight: bold; color: black; padding:5px; display:inline-block; margin-top: 13px; ">총 주문 금액</span>
+                    <div id="table_box_address2_1">
+
+                        <span style="font-size: 12px; color: black; padding:5px; display:inline-block; margin-top: 7px; margin-bottom: 7px; margin-left: 15px;"> 최종 결제 금액</span>
 
 
                     </div>
-                    <div id="table_box_payment2_2">
+                    <div id="table_box_address2_2">
 
-                        <span style="font-size: 12px; font-weight: bold; color: black; padding:5px; display:inline-block; margin-top: 13px; ">총 결제 금액</span>
+                        <span style="font-size: 12px; color: black; padding:5px; display:inline-block; margin-top: 7px;  margin-bottom: 7px; margin-left: 10px;"><?php echo number_format($row_information['payment_amount']).'원';?></span>
 
 
                     </div>
 
                 </div>
-                <div id="table_box_payment3">
 
-                    <div id="table_box_payment3_1">
+                <div id="table_box_address2">
 
-                        <span style="font-size: 21px; font-weight: bold; color: black; padding:5px; display:inline-block; margin-top: 15px; ">177,700원</span>
+                    <div id="table_box_address2_1">
 
-
-                    </div>
-                    <div id="table_box_payment3_2">
-
-                        <span style="font-size: 21px; font-weight: bold; color: black; padding:5px; display:inline-block; margin-top: 15px;">177,700원</span>
+                        <span style="font-size: 12px; color: black; padding:5px; display:inline-block; margin-top: 7px; margin-bottom: 7px; margin-left: 15px;"> 결제 수단</span>
 
 
                     </div>
+                    <div id="table_box_address2_2">
 
-
-                </div>
-                <div id="table_box_payment4">
-
-                    <div id="table_box_payment4_1">
-
-                        <span style="font-size: 12px; font-weight: bold; color: black; padding:5px; display:inline-block; margin-top: 7px; ">총 적립 예정 금액</span>
+                        <span style="font-size: 12px; color: black; padding:5px; display:inline-block; margin-top: 7px;  margin-bottom: 7px; margin-left: 10px;"><?php echo $row_information['payment_method'];?></span>
 
 
                     </div>
-                    <div id="table_box_payment4_2">
-
-                        <span style="font-size: 12px; font-weight: bold; color: black; padding:5px; display:inline-block; margin-top: 7px; margin-left: 10px;">1,7770원</span>
-
-
-                    </div>
-
-
 
                 </div>
 
@@ -466,7 +540,7 @@
                     </div>
                     <div id="table_box_address2_2">
 
-                        <span style="font-size: 12px; color: black; padding:5px; display:inline-block; margin-top: 7px;  margin-bottom: 7px; margin-left: 10px;">조제연</span>
+                        <span style="font-size: 12px; color: black; padding:5px; display:inline-block; margin-top: 7px;  margin-bottom: 7px; margin-left: 10px;"><?php echo $row_information['recipient_name'];?></span>
 
 
                     </div>
@@ -483,7 +557,17 @@
                     </div>
                     <div id="table_box_address2_2">
 
-                        <span style="font-size: 12px; color: black; padding:5px; display:inline-block; margin-top: 7px;  margin-bottom: 7px; margin-left: 10px;">420730</span>
+                        <span style="font-size: 12px; color: black; padding:5px; display:inline-block; margin-top: 7px;  margin-bottom: 7px; margin-left: 10px;">
+                            <?php
+
+                            $recipient_addr_split=$row_information['recipient_addr'];
+
+                            $recipient_addr = explode( '/', $recipient_addr_split);
+
+                            echo $recipient_addr[0];
+
+                            ?>
+                        </span>
 
 
                     </div>
@@ -500,7 +584,14 @@
                     </div>
                     <div id="table_box_address_long">
 
-                        <span style="font-size: 12px; color: black; padding:5px; display:inline-block; margin-top: 7px;  margin-bottom: 7px; margin-left: 10px;">경기도 부천시 원미구 중4동 은하마을아파트 503동 902호</span>
+                        <span style="font-size: 12px; color: black; padding:5px; display:inline-block; margin-top: 7px;  margin-bottom: 7px; margin-left: 10px;">
+                            <?php
+
+
+                            echo $recipient_addr[1]." ".$recipient_addr[2];
+
+                            ?>
+                        </span>
 
 
                     </div>
@@ -517,7 +608,7 @@
                     </div>
                     <div id="table_box_address2_2">
 
-                        <span style="font-size: 12px; color: black; padding:5px; display:inline-block; margin-top: 7px;  margin-bottom: 7px; margin-left: 10px;">032-326-2402</span>
+                        <span style="font-size: 12px; color: black; padding:5px; display:inline-block; margin-top: 7px;  margin-bottom: 7px; margin-left: 10px;"><?php echo $row_information['recipient_tel'];?></span>
 
 
                     </div>
@@ -534,7 +625,7 @@
                     </div>
                     <div id="table_box_address2_2">
 
-                        <span style="font-size: 12px; color: black; padding:5px; display:inline-block; margin-top: 7px;  margin-bottom: 7px;margin-left: 10px;">010-9488-3402</span>
+                        <span style="font-size: 12px; color: black; padding:5px; display:inline-block; margin-top: 7px;  margin-bottom: 7px;margin-left: 10px;"><?php echo $row_information['recipient_phone'];?></span>
 
 
                     </div>
@@ -552,7 +643,7 @@
                     <div id="table_box_address_long">
 
                         <span style="font-size: 12px; color: black; padding:5px; display:inline-block; margin-top: 7px; margin-bottom: 7px; margin-left: 10px;">
-                            주문시에 작성하시는 배송메시지란은 직접 운송하시는 택배사의 택배기사님께 메시지를 전달하는 부분입니다.</span>
+                            <?php echo $row_information['recipient_message'];?></span>
                     </div>
                 </div>
 

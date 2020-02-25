@@ -5,7 +5,7 @@
 <?php
 session_start();
 
-$email = $_POST['username'];
+$id = $_POST['username'];
 $password = $_POST['password'];
 
 //기존 비밀번호 암호화 -> DB값과 비교하기 위해서
@@ -16,7 +16,7 @@ $connect = mysqli_connect('localhost','FunIdeaDBUser','*TeamNova2019*','FitMe');
 //DB 가져올때 charset 설정 (안해줄시 한글 깨짐)
 mysqli_set_charset($connect,'utf8');
 
-$query ="SELECT * FROM resource_owner where username = '$email' and password='$password_hash'";
+$query ="SELECT * FROM resource_owner where username = '$id' and password='$password_hash'";
 
 $result = mysqli_query($connect, $query);
 
@@ -28,13 +28,20 @@ $total = mysqli_num_rows($result);
 
 if ($total==1) {
 
-    //fitme_login_callback으로부터 받은 사용자정보(이메일)를 GET으로 받고
-    //OAuth로부터의 이메일을 변수(이메일)에 저장
-    $email = $_POST['username'];
+
+    $query_id ="SELECT * FROM user_information where id = '$id'";
+
+    $result_id = mysqli_query($connect, $query_id);
+
+    $row_id = mysqli_fetch_assoc($result_id);
+
 
     //FitMe 메인서버의 이메일 세션 저장하고
-    $_SESSION['email'] = $email;
+    $_SESSION['id'] = $id;
+    $_SESSION['email'] = $row_id['email'];
     //스프링으로 아이디/비번을 뿌려준다
+
+
     
     ?>
 
@@ -42,7 +49,7 @@ if ($total==1) {
     <script>
         window.onload = function(){
             //인증서버에 로그인 보내기
-            post_to_url('http://15.165.80.29/login', {'username':'<?php echo $email;?>','password':'<?php echo $password;?>'});
+            post_to_url('http://15.165.80.29/login', {'username':'<?php echo $id;?>','password':'<?php echo $password;?>'});
             //post_to_url('http://localhost:8080/login', {'username':'yohan@gmail.com','password':'1234'});
         }
     </script>

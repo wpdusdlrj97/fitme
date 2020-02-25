@@ -115,9 +115,16 @@ mysqli_close($connect);
             <td class="head_table1"><a href="http://49.247.136.36/main/seller/inquire.php">입점문의</a></td>
             <?php if($_SESSION['email']){ ?>
                 <td class="head_table2"><a href="http://49.247.136.36/fitme_logout.php">Logout</a></td>
-                <td class="head_table3"><a href="http://49.247.136.36/main/mypage/order.php">Mypage</a></td>
+                <td class="head_table3"><a href="http://49.247.136.36/main/mypage/main_html.php">Mypage</a></td>
             <?php }else{ ?>
-                <td class="head_table2"><a href="http://49.247.136.36/main/fitme_session_login.php">Login</a></td>
+
+            <?php
+                //로그인 state 값 설정
+                $state = 'xyz';
+                // 세션 또는 별도의 저장 공간에 상태 토큰을 저장
+                $_SESSION['state'] = $state;
+            ?>
+                <td class="head_table2"><a href="http://15.165.80.29/oauth/authorize?client_id=ddb9468d-313f-42d7-a584-f7dd91696040&response_type=code&scope=read&state=xyz">Login</a></td>
             <?php }?>
             <td class="head_table4"><div class="head_hidden_990_android"></div></td>
             <td class="head_table5"><div class="head_hidden_990_ios"></div></td>
@@ -135,10 +142,10 @@ mysqli_close($connect);
                 <?php if($_SESSION['email']){ ?>
                     <div class="head_logout"><a href="http://49.247.136.36/fitme_logout.php">Logout</a></div>
                     <div class="head_slash">/</div>
-                    <div class="head_mypage"><a href="http://49.247.136.36/main/mypage/order.php">Mypage</a></div>
+                    <div class="head_mypage"><a href="http://49.247.136.36/main/mypage/main_html.php">Mypage</a></div>
                     <div class="head_slash">/</div>
                 <?php }else{ ?>
-                    <div class="head_login"><a href="http://49.247.136.36/main/fitme_session_login.php">Login</a></div>
+                    <div class="head_login"><a href="http://15.165.80.29/oauth/authorize?client_id=ddb9468d-313f-42d7-a584-f7dd91696040&response_type=code&scope=read&state=xyz">Login</a></div>
                     <div class="head_slash">/</div>
                 <?php }?>
                 <div class="head_android"></div>

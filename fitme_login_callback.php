@@ -96,8 +96,7 @@ if ($state != $stored_state) {
         curl_close($fitme_ch);
 
         //echo  "  출력 값 :".$fitme_ch_reponse;
-
-
+        
         // 제이슨 디코딩을 통해 유저 이름 출력
         $fitme_ch_responseArr = json_decode($fitme_ch_reponse, true);
         $username = $fitme_ch_responseArr['name'];;

@@ -8,7 +8,7 @@ $name_array = array("(XXL 추가) M1412 슬림핏 미니멀 블랙 블레이져"
 $price_array = array("89,000", "66,000", "254,000", "144,000", "57,400", "119,000", "499,000", "289,000", "79,200", "128,000");
 $fit_array = array("10.jpg", "11.jpg", "12.jpg", "13.jpg", "14.jpg", "15.jpg");
 
-
+$id = $_SESSION['id'];
 $email = $_SESSION['email'];
 
 if (!$email) //현재 로그인이 안된 경우에는 로그인 페이지로 되돌려야한다.
@@ -94,7 +94,15 @@ mysqli_set_charset($connect, 'utf8');
 
 
 
-    #category_content_box{ margin:0 auto; width:90%; float: inside; padding-top: 70px; padding-bottom: 70px;  background-color: #F5F6F7}
+    #category_content_box{ margin:0 auto; width:90%; height:700px; float: inside; padding-bottom: 70px;  background-color: white}
+
+    #category_content_box_title{ margin:0 auto; width:100%; height:50px; float: left; border-bottom: 1px solid black; background-color: white }
+
+    #category_content_box_warn{ margin:0 auto; width:100%; height:100px; float: left;background-color: white}
+
+    #category_content_box_date{ margin:0 auto; width:100%; height:50px; float: left; background-color: green}
+
+
 
 
     #category_footer_box{ margin:0 auto; width:90%; float: inside;  height: 250px; background-color: #F5F6F7}
@@ -117,6 +125,8 @@ mysqli_set_charset($connect, 'utf8');
         #mypage_box{ width:100%; }
         #content_box{ width:100%;}
         #member_box{ width:100%;}
+        #category_content_box{ width:100%;}
+
         #menu_box{ display: none;}
         #member_box_coupon{ display: none;}
     }
@@ -181,7 +191,7 @@ mysqli_set_charset($connect, 'utf8');
 
                             <div id="member_box_name1">
 
-                                <h3 style="margin-top: 35px; font-weight: bold; margin-left: 20px;"><?php echo $email;?> 님</h3>
+                                <h3 style="margin-top: 35px; font-weight: bold; margin-left: 20px;"><?php echo $id;?> 님</h3>
 
                             </div>
 
@@ -222,12 +232,25 @@ mysqli_set_charset($connect, 'utf8');
 
             </div>
 
-            <div id="category_content_box" style="text-align: center; " >
+            <div id="category_content_box" >
 
+
+                <div id="category_content_box_title" >
+
+                    <span style="font-size: 14px; font-weight:bolder; color:black; padding:5px; display:inline-block; margin-top:10px; margin-left: 10px;">주문내역 조회</span>
+
+
+                </div>
+
+
+                <div id="category_content_box_date" >
+
+
+
+                </div>
 
 
                 <h5 style="color:grey; font-weight: lighter">주문 내역이 없습니다</h5>
-
 
 
 

@@ -1,18 +1,28 @@
 <?php
 //사용자의 정보를 보내줄 페이지
-$email = $_POST['email'];//사용자에게 받은 이메일
+$id = $_POST['id'];//사용자에게 받은 이메일
 $connect = mysqli_connect('localhost','FunIdeaDBUser','*TeamNova2019*','FitMe');
 mysqli_set_charset($connect,'utf8');
-if($email)
+if($id)
 {
     //넘겨받은 사용자의 이메일로 DB를 조회한 후 사용자 정보를 보내준다.
-    $qry = mysqli_query($connect,"select *from user_information where email='$email'");
+    $qry = mysqli_query($connect,"select *from user_information where id='$id'");
     $row = mysqli_fetch_array($qry);
+    $data['email'] = $row['email'];
+    $data['level'] = $row['level'];
+    $data['name'] = $row['name'];
+    $data['age'] = $row['age'];
+    $data['sex'] = $row['sex'];
     $data['phone'] = $row['phone'];
+    $data['tel'] = $row['tel'];
+    $data['address'] = $row['address'];
     $data['push_consent'] = $row['push_consent'];
     $data['sns_consent'] = $row['sns_consent'];
     $data['email_consent'] = $row['email_consent'];
-    $data['selection_information'] = $row['selection_information'];
+    $data['photos'] = $row['photos'];
+//    $temp = $row['photos'];
+//    $data['location'] = json_decode($temp,true)['location'];
+//    $data['photo'] = json_decode($temp,true)['photo'];
     $data['shoulder_length'] = $row['shoulder_length'];
     $data['chest_size'] = $row['chest_size'];
     $data['arm_length'] = $row['arm_length'];
@@ -24,25 +34,8 @@ if($email)
     $data['leg_length'] = $row['leg_length'];
     $data['top_length'] = $row['top_length'];
     $data['weight'] = $row['weight'];
-    $data['age'] = $row['age'];
-    $photo_json = json_decode($row['photos'],true);
-    mysqli_close($connect);
-    $image_size_array = array();
-    for($i=0;$i<count($photo_json['photo']);$i++)
-    {
-        $image_size = getimagesize($photo_json['photo'][$i]);
-        $image_size_array_temp[0] = $image_size[0];
-        $image_size_array_temp[1] = $image_size[1];
-        array_push($image_size_array,$image_size_array_temp);
-    }
-    $photo_json['size']=$image_size_array;
-    $data['photos'] = $photo_json;
-    echo json_encode($data,JSON_UNESCAPED_UNICODE);
-}else{
-    $id = $_POST['id'];//사용자에게 받은 이메일
-    $pw = $_POST['pw'];
-    if($id&&$pw){
 
-    }
+    mysqli_close($connect);
+    echo json_encode($data,JSON_UNESCAPED_UNICODE);
 }
 ?>

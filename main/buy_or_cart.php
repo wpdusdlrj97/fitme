@@ -4,9 +4,15 @@ $connect = mysqli_connect('localhost', 'FunIdeaDBUser', '*TeamNova2019*', 'FitMe
 mysqli_set_charset($connect, 'utf8');
 
 
-$id = $_SESSION['email'];
+$id = $_SESSION['id'];
+
+//print_r($data);
 
 $data = json_decode($_POST['data'], true);
+
+print_r($data);
+
+
 if ($data) {
     //문자열 데이터
     $product_key = $data['product_key'];
@@ -25,6 +31,9 @@ if ($data) {
     $name = $row_product_info['name']; //상품명
     $image = $row_product_info['main_image']; //이미지
     $price = $row_product_info['price']; //상품가격
+
+
+
 
 
     if ($move == 'buy') { //상세페이지에서 바로 구매하기 버튼을 클릭할 시
@@ -48,6 +57,7 @@ if ($data) {
                 // $size[$buy_product_count];
                 // $count[$buy_product_count];
             }
+
             print_r("바로구매 아이디 - " . $id . "\n");
             print_r("바로구매 제품키 - " . $product_key . "\n");
             print_r("바로구매 - " . $move . "\n");
@@ -68,45 +78,51 @@ if ($data) {
         //                2. 동일한 제품이 장바구니에 없을경우 장바구니에 담는다
 
 
-        for ($buy_product_count = 0; $buy_product_count < count($count); $buy_product_count++) {
+
+        for ($cart_product_count = 0; $cart_product_count < count($count); $cart_product_count++) {
 
 
-            $query_overlap="select * from cart_form where product_key='$product_key' and product_size='$size[$buy_product_count]' and product_color='$color[$buy_product_count]'";
+            $query_overlap="select * from cart_form where user_id='$id' and product_key='$product_key' and product_size='$size[$cart_product_count]' and product_color='$color[$cart_product_count]'";
             $result_overlap=mysqli_query($connect,$query_overlap);
             $total_rows_overlap = mysqli_num_rows($result_overlap);
 
+            if($total_rows_overlap==0){ //중복이 안된경우 추가
 
-            if($total_rows_overlap=='0'){ //중복되는 상품이 없을 경우
-
-                $query_cart = "insert into cart_form(user_id, product_key, product_name, product_image, product_size, product_color, product_count, product_amount) 
-                                VALUES('$id','$product_key','$name','$image','$size[$buy_product_count]','$color[$buy_product_count]','$count[$buy_product_count]','$price')";
+                $query_cart = "insert into cart_form(user_id, product_key, product_size, product_color, product_count) VALUES('$id','$product_key','$size[$cart_product_count]','$color[$cart_product_count]','$count[$cart_product_count]')";
                 $result_cart = mysqli_query($connect, $query_cart);
 
-                print_r("카트 아이디 - " . $id . "\n");
-                print_r("카트 제품키 - " . $product_key . "\n");
-                print_r("장바구니 - " . $move . "\n");
+                if($result_cart){
+                    print_r("중복이 안된경우 제품 키 - " . $product_key . "\n");
+                    print_r("중복이 안된경우 제품 사이즈 - " . $size[$cart_product_count] . "\n");
+                    print_r("중복이 안된경우 제품 색상 - " . $color[$cart_product_count] . "\n");
+                    print_r("중복이 안된경우 제품 개수 - " . $count[$cart_product_count] . "\n");
+                }else{
+                    print_r("중복 안된 경우 실패");
+                }
 
 
-                print_r($color);
-                print_r($size);
-                print_r($count);
+
+            }else{ //중복이 된경우 update
+
+                $query_cart = "update cart_form set product_count=product_count+'$count[$cart_product_count]' where user_id='$id' and product_key='$product_key' and product_size='$size[$cart_product_count]' and product_color='$color[$cart_product_count]'";
+                $result_cart = mysqli_query($connect, $query_cart);
 
 
-            }else{ //중복되는 상품이 있을 경우
+                if($result_cart){
+                    print_r("중복이 된경우 제품 키 - " . $product_key . "\n");
+                    print_r("중복이 된경우 제품 사이즈 - " . $size[$cart_product_count] . "\n");
+                    print_r("중복이 된경우 제품 색상 - " . $color[$cart_product_count] . "\n");
+                    print_r("중복이 된경우 제품 개수 - " . $count[$cart_product_count] . "\n");
+                }else{
+                    print_r("중복 된 실패");
+                }
 
-                //중복되는 상품이 있음에도 불구하고 장바구니에 추가하실거냐는 안내메시지
-                //추가한다는 메시지 -> 기존 수량에 +해준다
-
-                print_r("중복되는 상품이 있습니다");
 
             }
 
-            
-            // $color[$buy_product_count];
-            // $size[$buy_product_count];
-            // $count[$buy_product_count];
         }
 
+        
 
     } else { //오류가 날 경우
 
@@ -116,4 +132,6 @@ if ($data) {
 
     mysqli_close($connect);
 }
+
+
 ?>

@@ -9,6 +9,7 @@ $qry = mysqli_query($connect,"select * from product where product_key='$product'
 $row = mysqli_fetch_array($qry);
 //추후에 이메일을 상호명으로 바꿔야함
 
+
 //아래서 사용할 데이터들을 각 변수에 저장한다
 $s_n = $row['email'];
 $get_shop_name = mysqli_query($connect,"select * from shop_name where email='$s_n'");
@@ -237,6 +238,51 @@ for($size_name_count=1;$size_name_count<count($size_key);$size_name_count++) {
         $need_not++;
     }
 }
+$cookie_json= json_decode($_COOKIE['fitme_p'],true);
+setcookie('fitme_p','1',time() - 86400 * 7);
+for($cookie_count=0;$cookie_count<count($cookie_json);$cookie_count++){
+    if($cookie_json[$cookie_count]==$product){
+        array_splice($cookie_json,$cookie_count,1);
+        $cookie_count--;
+    }
+}
+
+if($cookie_json){
+    if(count($cookie_json)>19){
+        array_splice($cookie_json,19,1);
+        array_unshift($cookie_json,$product);
+    }else{
+        array_unshift($cookie_json,$product);
+    }
+}else{
+    $cookie_json = array($product);
+}
+$ar_cookie = json_encode($cookie_json,JSON_UNESCAPED_UNICODE);
+
+setcookie('fitme_p', $ar_cookie, time() + 86400 * 7);
+
+//echo $cookie_json.'<br>';
+//for($cook_c=0;$cook_c<count($cookie_json);$cook_c++){
+//    if($cookie_json[$cook_c]==$product){
+//        array_splice($cookie_json,$cook_c,1);
+//        break;
+//    }
+//}
+//print_r($cookie_json);
+//if($cookie_json){
+//    if(count($cookie_json)==5){
+//        //마지막 인덱스 삭제후 0번인덱스에 삽입
+//        $cookie_json = array_pop($cookie_json);
+//        array_unshift($cookie_json,$product);
+//    }else{
+//        //0번 인덱스에 삽입
+//        array_unshift($cookie_json,$product);
+//    }
+//    print_r($cookie_json);
+//}else{
+//    $cookie_json = array();
+//    array_unshift($cookie_json,$product);
+//}
 ?>
 <!DOCTYPE html>
 <html lang="ko">
@@ -681,7 +727,7 @@ for($size_name_count=1;$size_name_count<count($size_key);$size_name_count++) {
                     <div class="product_preview_clothes_all_box">
                         <div class="product_preview_clothes_title_box">
                             <img class="product_preview_clothes_title_image" src="/web/icon/collapse.png">
-                            <div class="product_preview_clothes_title_text">Pre Dressing</div>
+                            <div class="product_preview_clothes_title_text">Pre Dress</div>
                             <div class="product_preview_clothes_title_line"></div>
                         </div>
                         <div class="product_preview_clothes_contents_box">
@@ -1043,6 +1089,62 @@ for($size_name_count=1;$size_name_count<count($size_key);$size_name_count++) {
     var preview_category = 0; //preview 카테고리의 열번호
     var product_size_table_td = 0;
     var compare_image_location = <?php echo json_encode($compare_image_location)?>; //비교 이미지 경로를 가지고 있는 오브젝트
+    var likes = false;
+    var likes_count = parseInt("<?php echo $likes_all_result?>");
+    <?php
+    if($likes){?>
+        likes = true;
+    <?php }?>
+    console.log('<?php echo json_encode($cookie_json)?>');
+    //찜 기능 클릭시 이벤트
+    $('.product_like_it_button').click(function(){
+        like_this_product(this);
+    });
+    $('.hidden_770_bottom_button2').click(function(){
+        like_this_product(this);
+    });
+
+    //찜 기능 클릭시 호출되는 함수
+    function like_this_product(object)
+    {
+        var email = '<?php echo $email?>';
+        var product_key = '<?php echo $product?>';
+        if(email){
+            var data=null;
+            if(likes){
+                data={number:'1',email:email,product_key:product_key};
+            }else{
+                data={number:'0',email:email,product_key:product_key};
+            }
+            console.log(data);
+            $.ajax({
+                type:"POST",
+                url:"/main/likes_server.php",
+                data : data,
+                dataType : "text",
+                success: function(string){
+                    if(likes){
+                        likes_count--;
+                        likes = false;
+                        $('.product_top_buttons_like_image').css("background-image","url('/web/icon/heart_white.png')");
+                        $('.hidden_770_like_image').css("background-image","url('/web/icon/heart_white.png')");
+                    }else{
+                        likes = true;
+                        likes_count++;
+                        $('.product_top_buttons_like_image').css("background-image","url('/web/icon/heart_red.png')");
+                        $('.hidden_770_like_image').css("background-image","url('/web/icon/heart_red.png')");
+                    }
+                    $('.product_top_buttons_like_text').text(likes_count+"명이 좋아합니다.");
+                },
+                error: function(xhr, status, error) {
+                    alert(error);
+                }
+            });
+        }else{
+            location.href="http://49.247.136.36/main/fitme_session_login.php";
+        }
+    }
+
 
     <?php if($location_array&&$fitme_image&&$line_position){?>
         //사용자 좌표경로 최초 값, 상품 입혀보기 기능에서 사이즈 비교 default 값
@@ -1209,8 +1311,7 @@ for($size_name_count=1;$size_name_count<count($size_key);$size_name_count++) {
 
     //장바구니 or 바로구매 기능 클릭시 이벤트
     $('.product_buy_it_now_button').click(function(){
-        var email = '<?php echo $email?>';
-        if($('.product_detail_top_add_product').length>0&&email){
+        if($('.product_detail_top_add_product').length>0){
             var buy_product = new Object;
             buy_product_size= new Array;
             buy_product_color = new Array;
@@ -1234,8 +1335,12 @@ for($size_name_count=1;$size_name_count<count($size_key);$size_name_count++) {
                 data : {'data':data},
                 dataType : "text",
                 success: function(string){
-                    console.log(string);
-                    // location.href="http://49.247.136.36/mypage/";
+                    console.log('바로구매');
+                   
+                    location.href="http://49.247.136.36/main/cart/purchase_html.php";
+
+
+
                 },
                 error: function(xhr, status, error) {
                     alert(error);
@@ -1246,8 +1351,7 @@ for($size_name_count=1;$size_name_count<count($size_key);$size_name_count++) {
         }
     });
     $('.product_add_to_cart_button').click(function(){
-        var email = '<?php echo $email?>';
-        if($('.product_detail_top_add_product').length>0&&email){
+        if($('.product_detail_top_add_product').length>0){
             var buy_product = new Object;
             buy_product_size= new Array;
             buy_product_color = new Array;
@@ -1273,7 +1377,8 @@ for($size_name_count=1;$size_name_count<count($size_key);$size_name_count++) {
                 success: function(string){
                     console.log(string);
                     if(confirm('장바구니에 담았습니다.\n장바구니로 이동하시겠습니까?')==true){
-                        console.log('장바구니 이동')
+                        console.log('장바구니 이동');
+                        location.href="http://49.247.136.36/main/cart/cart_html.php";
                     }
                 },
                 error: function(xhr, status, error) {
@@ -2354,9 +2459,8 @@ for($size_name_count=1;$size_name_count<count($size_key);$size_name_count++) {
                 "margin-bottom":"0px"
             });
         }else{
-            var email = '<?php echo $email?>';
             var text_for_move = $(this).text();
-            if($('.product_detail_top_add_product').length>0&&email){
+            if($('.product_detail_top_add_product').length>0){
                 var buy_product = new Object;
                 buy_product_size= new Array;
                 buy_product_color = new Array;
@@ -2387,6 +2491,7 @@ for($size_name_count=1;$size_name_count<count($size_key);$size_name_count++) {
                         console.log(string);
                         if(text_for_move=='BUY IT NOW'){
                             console.log('바로구매 이동');
+                            location.href="http://49.247.136.36/main/cart/purchase_html.php";
                         }else{
                             if(confirm('장바구니에 담았습니다.\n장바구니로 이동하시겠습니까?')==true){
                                 console.log('장바구니 이동')

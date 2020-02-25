@@ -6,7 +6,7 @@ $connect = mysqli_connect('localhost','FunIdeaDBUser','*TeamNova2019*','FitMe');
 mysqli_set_charset($connect,'utf8'); //문자셋을 지정한다.
 
 //현재 유지되고 있는 세션 변수에서 이메일을 가지고 온다.
-$email = $_SESSION['email'];
+$id = $_SESSION['id'];
 
 //purchase_html.php에서 받아온 order_key
 $order_key= $_GET['order_key'];
@@ -27,5 +27,5 @@ if($result_delete){ // 삭제가 되었을 경우 다시 주문 페이지로 이
 
 
 
-
+mysqli_close($connect);
 ?>

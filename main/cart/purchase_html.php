@@ -3,29 +3,55 @@ session_start();
 $connect = mysqli_connect('localhost', 'FunIdeaDBUser', '*TeamNova2019*', 'FitMe');
 mysqli_set_charset($connect, 'utf8');
 
+$id = $_SESSION['id'];
 $email = $_SESSION['email'];
 
-if (!$email) //현재 로그인이 안된 경우에는 로그인 페이지로 되돌려야한다.
+
+if (!$id) //현재 로그인이 안된 경우에는 로그인 페이지로 되돌려야한다.
 {
-    $_SESSION['URL'] = 'http://49.247.136.36/main/cart/purchase_html.php'; //이 페이지로 다시 되돌아 오기 위해 세션에 이 페이지의 URL을 넣는다.
+
+    // 로그인이 안되었을 경우에는 상품페이지로 이동한다
+    $_SESSION['URL'] = 'http://49.247.136.36/main/cart/purchase_html.php';
 
     $state = 'xyz';
     // 세션 또는 별도의 저장 공간에 상태 토큰을 저장
     $_SESSION['state'] = $state;
 
     echo '<script>location.href=\'http://15.165.80.29/oauth/authorize?client_id=ddb9468d-313f-42d7-a584-f7dd91696040&response_type=code&scope=read&state=xyz\'</script>'; //로그인 페이지로 이동한다.
+
 }
 
 
-//시간 순으로 정렬하기
-$query = "SELECT * FROM order_form where user_id='$email' ";
+
+//주문페이지
+$query = "SELECT * FROM order_form where user_id='$id'";
 
 $result = mysqli_query($connect, $query);
 
 $total = mysqli_num_rows($result);
 
 
+//시간 순으로 정렬하기
+$query_information = "SELECT * FROM user_information where id='$id'";
+
+$result_information = mysqli_query($connect, $query_information);
+
+$row_information = mysqli_fetch_assoc($result_information)
+
 ?>
+
+<?php
+
+//echo $total ;
+
+if($total<1){ //주문한 상품의 개수가 하나도 없다면 장바구니 페이지로 로드시키기
+
+    echo '<script>location.href=\'http://49.247.136.36/main/cart/cart_html.php\'</script>'; //로그인 페이지로 이동한다.
+
+}else{   //주문한 상품의 개수가 하나라도 있다면 해당 html을 호출   ?>
+
+
+
 <html>
 
 <style>
@@ -48,7 +74,7 @@ $total = mysqli_num_rows($result);
     .form-style-2 input.input-field,
     .form-style-2 .tel-number-field,
     .form-style-2 .textarea-field,
-    .form-style-2 .select-field {box-sizing: border-box;-webkit-box-sizing: border-box;-moz-box-sizing: border-box;border: 1px solid #C2C2C2;box-shadow: 1px 1px 4px #EBEBEB;-moz-box-shadow: 1px 1px 4px #EBEBEB;-webkit-box-shadow: 1px 1px 4px #EBEBEB;-webkit-border-radius: 3px;-moz-border-radius: 3px;padding: 7px;outline: none;}
+    .form-style-2 .select-field {box-sizing: border-box;-webkit-box-sizing: border-box;-moz-box-sizing: border-box;border: 1px solid #C2C2C2;box-shadow: 1px 1px 4px #EBEBEB;-moz-box-shadow: 1px 1px 4px #EBEBEB;-webkit-box-shadow: 1px 1px 4px #EBEBEB;padding: 7px;outline: none;}
     .form-style-2 .input-field:focus,
     .form-style-2 .tel-number-field:focus,
     .form-style-2 .textarea-field:focus,
@@ -57,7 +83,7 @@ $total = mysqli_num_rows($result);
     .form-style-2 .textarea-field {height: 100px;width: 65%;}
 
     .form-style-2 input[type=submit],
-    .form-style-2 input[type=button] {border: none;padding: 8px 15px 8px 15px;background: #FF8500;color: #fff;box-shadow: 1px 1px 4px #DADADA;-moz-box-shadow: 1px 1px 4px #DADADA;-webkit-box-shadow: 1px 1px 4px #DADADA;border-radius: 3px;-webkit-border-radius: 3px;-moz-border-radius: 3px;}
+    .form-style-2 input[type=button] {border: none;padding: 8px 15px 8px 15px;background: #FF8500;color: #fff;box-shadow: 1px 1px 4px #DADADA;-moz-box-shadow: 1px 1px 4px #DADADA;-webkit-box-shadow: 1px 1px 4px #DADADA;}
 
     .form-style-2 input[type=submit]:hover,
     .form-style-2 input[type=button]:hover {background: #EA7B00;color: #fff;}
@@ -66,7 +92,13 @@ $total = mysqli_num_rows($result);
 
 
     .button {background-color: #000000;border: none;color: white;padding: 10px 25px;text-align: center;text-decoration: none;display:
-             inline-block;font-size: 12px;margin: 4px 2px;cursor: pointer;border-radius: 10px;}
+             inline-block;font-size: 12px;margin: 4px 2px;cursor: pointer;}
+
+
+    a { color: black; text-decoration: none;}
+
+    a:hover {color: silver; text-decoration: none;}
+
 
 
 
@@ -181,6 +213,9 @@ $total = mysqli_num_rows($result);
         -webkit-appearance: none;
         margin: 0;
     }
+
+    #postcode_button { background-color: white;border: 1px solid black ; color: black; width: 70px;height: 25px; margin-left: 10px; text-align: center;text-decoration: none;display: inline-block;font-size: 11px;text-align: center;cursor: pointer;}
+
 
 
 
@@ -343,20 +378,77 @@ $total = mysqli_num_rows($result);
 
 </script>
 
+
+<!--우편번호 -->
 <script>
 
     function openZipSearch() {
         new daum.Postcode({
             oncomplete: function (data) {
-                $('[name=buyer_postcode]').val(data.zonecode); // 우편번호 (5자리)
-                $('[name=buyer_addr1]').val(data.address);
-                $('[name=buyer_addr2]').val(data.buildingName);
+                $('[name=recipient_postcode]').val(data.zonecode); // 우편번호 (5자리)
+                $('[name=recipient_addr1]').val(data.address);
+                $('[name=recipient_addr2]').val(data.buildingName);
             }
         }).open();
     }
 
 </script>
 
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        // DOM 생성 완료 시 화면 숨김 (파라미터로 전달되는 id는 제외)
+
+
+        // radio change 이벤트
+        $("input[name=address_choice]").change(function () {
+            var radioValue = $(this).val();
+            if (radioValue == "order") { //주문자 정보
+
+
+                document.getElementById("recipient_name").value = $("#recipient_name_hidden").text();
+
+                document.getElementById("recipient_postcode").value = $("#recipient_postcode_hidden").text();
+                document.getElementById("recipient_addr1").value = $("#recipient_addr1_hidden").text();
+                document.getElementById("recipient_addr2").value = $("#recipient_addr2_hidden").text();
+
+                document.getElementById("recipient_tel_no_1").value = $("#recipient_tel_no_1_hidden").text();
+                document.getElementById("recipient_tel_no_2").value = $("#recipient_tel_no_2_hidden").text();
+                document.getElementById("recipient_tel_no_3").value = $("#recipient_tel_no_3_hidden").text();
+
+                document.getElementById("recipient_phone_no_1").value = $("#recipient_phone_no_1_hidden").text();
+                document.getElementById("recipient_phone_no_2").value = $("#recipient_phone_no_2_hidden").text();
+                document.getElementById("recipient_phone_no_3").value = $("#recipient_phone_no_3_hidden").text();
+
+            } else { // 최근 배송지
+
+                document.getElementById("recipient_name").value = '';
+                document.getElementById("recipient_postcode").value = '';
+                document.getElementById("recipient_addr1").value = '';
+                document.getElementById("recipient_addr2").value = '';
+
+                document.getElementById("recipient_tel_no_1").value = '';
+                document.getElementById("recipient_tel_no_2").value = '';
+                document.getElementById("recipient_tel_no_3").value = '';
+
+                document.getElementById("recipient_phone_no_1").value = '';
+                document.getElementById("recipient_phone_no_2").value = '';
+                document.getElementById("recipient_phone_no_3").value = '';
+
+            }
+        });
+
+        // 체크 되어 있는지 확인
+        var checkCnt = $("input[name=address_choice]:checked").size();
+        if (checkCnt == 0) {
+            // default radio 체크 (첫 번째)
+            $("input[name=address_choice]").eq(0).attr("checked", true);
+        }
+    });
+
+
+
+</script>
 
 
 <script type="text/javascript">
@@ -544,12 +636,22 @@ $total = mysqli_num_rows($result);
         }
     </script>
 
+    <!--뒤로가기 버튼 -->
+    <script type="text/javascript">
+
+        function go_back(){
+            window.history.back();
+        }
+
+    </script>
+
+
 
     <title>FITME</title>
 </head>
 
-
-<body oncontextmenu='return false' onselectstart='return false' ondragstart='return false'>
+<!-- 우클릭 방지용 -->
+<!-- <body oncontextmenu='return false' onselectstart='return false' ondragstart='return false'> -->
 
 <div id="header"></div>
 
@@ -584,7 +686,7 @@ $total = mysqli_num_rows($result);
 
                 <div id="table_box2">
 
-                    <span style="font-size: 12px; color: black; padding:5px; display:inline-block; margin-left: 10px;">국내배송상품 주문내역</span>
+                    <span style="font-size: 12px; font-weight:bolder; color:black; padding:5px; display:inline-block; margin-left: 10px;">국내배송상품 주문내역</span>
 
 
                 </div>
@@ -597,7 +699,7 @@ $total = mysqli_num_rows($result);
                                 <th> <span style="font-size: 12px; color: black; padding:1px; margin-top: 10px; margin-bottom: 10px; display:inline-block;">이미지</span></th>
                                 <th><span style="font-size: 12px; color: black; padding:1px; display:inline-block;">상품명/옵션</span></th>
                                 <th><span style="font-size: 12px; color: black; padding:1px; display:inline-block;">판매가</span></th>
-                                <th id="th_delete"><span  style="font-size: 12px; color: black; padding:1px; display:inline-block;">수량</span></th>
+                                <th><span  style="font-size: 12px; color: black; padding:1px; display:inline-block;">수량</span></th>
                                 <th id="th_delete"><span  style="font-size: 12px; color: black; padding:1px; display:inline-block;">적립금</span></th>
                                 <th id="th_delete"><span  style="font-size: 12px; color: black; padding:1px; display:inline-block;">배송구분</span></th>
                                 <th id="th_delete"><span  style="font-size: 12px; color: black; padding:1px; display:inline-block;">배송비</span></th>
@@ -608,14 +710,14 @@ $total = mysqli_num_rows($result);
                             </tr>
 
 
-                            <tbody style="border-bottom: 1px solid #ddd;">
+                            <tbody>
                             <?php
 
                             //총 주문 금액
                             $order_amount=0;
 
                             //배송비
-                            $order_delivery=2500;
+                            $order_delivery=0 ;
 
                             //사용자의 적립금
                             $user_save_amount=4000;
@@ -630,10 +732,14 @@ $total = mysqli_num_rows($result);
                             //상품명
                             $buy_product_array = array();
 
+                            //상품 이름/색상/사이즈/수량/
+                            $product_information_group = array();
+
 
                            while ($rows = mysqli_fetch_assoc($result)) { //DB에 저장된 데이터 수 (열 기준)
 
                                 $order_key = $rows['order_key'];
+                                $product_key = $rows['product_key'];
                                 $product_image = $rows['product_image'];
                                 $product_name = $rows['product_name'];
                                 $product_size = $rows['product_size'];
@@ -654,14 +760,24 @@ $total = mysqli_num_rows($result);
                                 //상품명 배열
                                 array_push($buy_product_array,$product_name);
 
-                                ?>
+
+                                //상품 추가
+                                $product_information = array("product_key" => $product_key, "product_color" => $product_color, "product_size" => $product_size, "product_count" => $product_count);
+
+                                //상품명 배열
+                                array_push($product_information_group,$product_information);
+
+
+                            ?>
 
                             <!-- 상품 이미지 -->
-                            <td width="10%" align="center"><img src="<?php echo $product_image; ?>" alt="My Image" width="90" height="90" style="margin-top:15px; margin-bottom: 15px;"></td>
+                            <td width="10%" align="center"><img src="<?php echo $product_image; ?>" alt="My Image"  onClick="location.href ='http://49.247.136.36/main/product.php?product=<?php echo $product_key;?>'" width="90" height="90" style="margin-top:15px; margin-bottom: 15px; cursor: pointer"></td>
                             <!-- 상품명/옵션 -->
-                            <td width="30%" align="center">
-                                <div name='buy_product_name' id='buy_product_name' style="font-size: 12px; color: black; padding:1px; display:inline-block;">
-                                    <?php echo $product_name; ?></div><br>
+                            <td width="25%" align="center">
+                                <div name='buy_product_name' id='buy_product_name' style="font-size: 12px; font-weight: bold; color: black; padding:1px; display:inline-block; cursor: pointer;  ">
+                                    <a href="http://49.247.136.36/main/product.php?product=<?php echo $product_key;?>" ><?php echo $product_name; ?></a>
+                                </div>
+                                <br>
                                 <div style="font-size: 12px; color: black; padding:1px; display:inline-block;">
                                     <?php echo '[옵션 - '.$product_color.', '. $product_size.']'; ?>
                                 </div>
@@ -669,7 +785,7 @@ $total = mysqli_num_rows($result);
                             <!-- 상품 판매가 -->
                             <td width="5%" align="center"><span style="font-size: 12px; color: black; padding:1px; display:inline-block;"><?php echo number_format($product_amount); ?></span></td>
                             <!-- 상품 수량 -->
-                            <td id="td_delete" width="5%" align="center"><span style="font-size: 12px; color: black; padding:1px; display:inline-block;"><?php echo $product_count; ?></span></td>
+                            <td width="5%" align="center"><span style="font-size: 12px; color: black; padding:1px; display:inline-block;"><?php echo $product_count; ?></span></td>
                             <!-- 상품 적립금 -->
                             <td id="td_delete" width="5%" align="center"><span style="font-size: 12px; color: black; padding:1px; display:inline-block;"> <?php echo number_format($product_save); ?> </span></td>
                             <!-- 배송구분 -->
@@ -679,14 +795,17 @@ $total = mysqli_num_rows($result);
                             <!-- 합계 -->
                             <td id="td_delete" width="5%" align="center"><span style="font-size: 12px; color: black; padding:1px; display:inline-block;"><?php echo number_format($product_amount_all);?> </span></td>
                             <!-- 선택/삭제-->
-                            <td width="5%" align="center" > <button id="table_box3_delete_button" type="button" class="btnDel" onclick="delete_product('<?php echo $order_key; ?>')"> X </button></td>
+                            <td width="5%" align="center"  > <button id="table_box3_delete_button" type="button" class="btnDel" onclick="delete_product('<?php echo $order_key; ?>')"> X </button></td>
 
                             </tbody>
 
                             <?php
                             }
-                            ?>
 
+                            // 데이터가 JSON Array 문자열로 변환됨
+                            $product_information_group_json =  json_encode($product_information_group,JSON_UNESCAPED_UNICODE);
+
+                            ?>
 
                         </table>
 
@@ -694,8 +813,11 @@ $total = mysqli_num_rows($result);
 
                 </div>
 
-                <div id="table_box4" style="text-align: end">
+                <span id="user_id" style="display: none"><?php echo $id;?></span>
+                <span id="product_information_group_json" style="display: none"><?php echo $product_information_group_json;?></span>
 
+
+                <div id="table_box4" style="text-align: end">
 
                     <span style="font-size: 12px; color: black; padding:1px; margin-top: 10px; margin-bottom: 10px; display:inline-block;">상품구매금액</span>
 
@@ -719,12 +841,118 @@ $total = mysqli_num_rows($result);
 
                 <div id="table_box5">
 
-                    <button id="table_box5_button" type="button" style="margin-right: 5px;"> 이전페이지 </button>
+                    <button id="table_box5_button" type="button" style="margin-right: 5px;" onclick="go_back();"> 이전페이지 </button>
 
                 </div>
 
 
             </div>
+
+
+            <div id="info_box">
+
+                <?php
+
+
+                //주문자 이름
+                $order_information_name = $row_information['name'];
+
+                //주문자 주소
+                $order_information_address = $row_information['address'];
+
+                if($order_information_address==""){ //정보가 들어있지 않은 경우
+                    $address_divide_1='';
+                    $address_divide_2='';
+                    $address_divide_3='';
+
+                }else{ // 정보가 들어있을 경우
+
+                    $address_divide = explode( '/', $order_information_address);
+
+                    $address_divide_1 = $address_divide[0];
+                    $address_divide_2 = $address_divide[1];
+                    $address_divide_3 = $address_divide[2];
+                }
+
+
+                //주문자 일반전화번호 $order_information_tel
+                $order_information_tel = $row_information['tel'];
+                if($order_information_tel==""){ //정보가 들어있지 않은 경우
+
+                    $tel_divide_1='';
+                    $tel_divide_2='';
+                    $tel_divide_3='';
+
+                }else{ // 정보가 들어있을 경우
+                    $tel_divide = explode( '-', $order_information_tel);
+
+                    $tel_divide_1 = $tel_divide[0];
+                    $tel_divide_2 = $tel_divide[1];
+                    $tel_divide_3 = $tel_divide[2];
+
+
+                }
+
+
+                //주문자 핸드폰 번호
+                $order_information_phone = $row_information['phone'];
+                if($order_information_phone==""){ //정보가 들어있지 않은 경우
+
+                    $phone_divide_1='';
+                    $phone_divide_2='';
+                    $phone_divide_3='';
+
+                }else{ // 정보가 들어있을 경우
+                    $phone_divide = explode( '-', $order_information_phone);
+
+                    $phone_divide_1 = $phone_divide[0];
+                    $phone_divide_2 = $phone_divide[1];
+                    $phone_divide_3 = $phone_divide[2];
+
+
+                }
+
+
+
+
+                //주문자 이메일
+                $order_information_email = $row_information['email'];
+
+                ?>
+
+                <div id="margin_box">
+
+                </div>
+
+                <div class="form-style-2" style="padding: 10px;">
+                    <div class="form-style-2-heading">주문 정보 <span style="font-size: 11px;">( <span class="required">*</span> 필수 입력사항 )</span></div>
+
+
+                    <label for="field1">
+                        <span>주문하시는 분 <span class="required">*</span></span>
+                        <input type="text" class="input-field" name="order_name" id="order_name" value="<?php echo $order_information_name; ?>"style="width:120px; height:26px;"/>
+                    </label>
+
+
+
+                    <label>
+                        <span>휴대전화<span class="required">*</span></span>
+                        <input type="text" class="tel-number-field"name="order_phone_no_1" id="order_phone_no_1" value="<?php echo $phone_divide_1; ?>" maxlength="4"/>
+                        -
+                        <input type="text" class="tel-number-field" name="order_phone_no_2" id="order_phone_no_2" value="<?php echo $phone_divide_2; ?>" maxlength="4"/>
+                        -
+                        <input type="text" class="tel-number-field" name="order_phone_no_3" id="order_phone_no_3" value="<?php echo $phone_divide_3; ?>" maxlength="10"/>
+                    </label>
+
+                    <label for="field2">
+                        <span>Email <span class="required">*</span></span>
+                        <input type="text" class="input-field" name="order_email" id="order_email" value="<?php echo $order_information_email; ?>" style="width:200px; height:26px;"/>
+                    </label>
+
+                </div>
+
+            </div>
+
 
             <div id="margin_box">
 
@@ -733,54 +961,72 @@ $total = mysqli_num_rows($result);
             <div id="info_box">
 
                 <div class="form-style-2" style="padding: 10px;">
-                    <div class="form-style-2-heading">주문 정보</div>
+                    <div class="form-style-2-heading">배송 정보 <span style="font-size: 11px;">( <span class="required">*</span> 필수 입력사항 )</span></div>
 
-                    <label for="field2"><span>배송지 선택<span class="required">*</span> </span>
-                        <input type='radio' name='address_choice' value='new' checked/>신규배송지
-                        &nbsp;&nbsp;&nbsp;<input type='radio' name='address_choice' value='basic'/>기본배송지</label>
-
-
-                    <label for="field1"><span>주문하시는 분 <span class="required">*</span></span>
-                        <input type="text" class="input-field" name="buyer_name" id="buyer_name" value="조제연"
-                               style="width:120px; height:26px;"/></label>
-
-                    <label style="border-bottom: 1px solid white; padding-bottom: 0px;"><span>주소<span
-                                    class="required">*</span> </span><input type="text" class="input-field"
-                                                                            name="buyer_postcode" id="buyer_postcode"
-                                                                            style="width:80px; height:26px;"
-                                                                            readonly/>
-                        <button type="button" onclick="openZipSearch()" style="margin-left: 10px;">우편번호</button>
-                    </label>
-                    <label style="border-bottom: 1px solid white; padding-bottom: 0px;"><span></span>
-                        <input type="text"class="input-field"name="buyer_addr1" id="buyer_addr1" style="width:200px; height:30px;"readonly/>
-                    </label>
-                    <label><span></span>
-                        <input type="text" class="input-field" name="buyer_addr2" id="buyer_addr2"style="width:200px; height:30px;"/>
+                    <label for="field2">
+                        <span>배송지 선택<span class="required">*</span></span>
+                        <input type='radio' name='address_choice' value='order' />회원정보
+                        <input type='radio' name='address_choice' value='latest' />최근배송지
                     </label>
 
 
-                    <label><span>일반전화</span><input type="text" class="tel-number-field"
-                                                   name="tel_no_1" value="" maxlength="4"/> -
-                        <input type="text" class="tel-number-field" name="tel_no_2" value="" maxlength="4"/> - <input
-                                type="text" class="tel-number-field" name="tel_no_3" value="" maxlength="10"/></label>
-                    <label><span>휴대전화<span class="required">*</span></span><input type="text" class="tel-number-field"
-                                                                                  name="phone_no_1" id="phone_no_1"
-                                                                                  value="010"
-                                                                                  maxlength="4"/> -
-                        <input type="text" class="tel-number-field" name="phone_no_2" id="phone_no_2" value="9488"
-                               maxlength="4"/> -
-                        <input
-                                type="text" class="tel-number-field" name="phone_no_3" id="phone_no_3" value="3402"
-                                maxlength="10"/></label>
+                    <label for="field1">
+                        <span>받으시는 분<span class="required">*</span></span>
+                        <input type="text" class="input-field" name="recipient_name" id="recipient_name" value="<?php echo $order_information_name; ?>" style="width:120px; height:26px;"/>
+                    </label>
+                    <div id='recipient_name_hidden' name='recipient_name_hidden' style="display: none"><?php echo $order_information_name; ?></div>
 
-                    <label for="field2"><span>Email <span class="required">*</span></span><input type="text"
-                                                                                                 class="input-field"
-                                                                                                 name="buyer_email"
-                                                                                                 id="buyer_email"
-                                                                                                 value="wpdusdlrj97@gmail.com"
-                                                                                                 style="width:200px; height:26px;"/></label>
 
-                    <label for="field5"><span>배송메시지 </span><textarea name="buyer_message" id="buyer_message" class="textarea-field" ></textarea></label>
+                    <label style="border-bottom: 1px solid white; padding-bottom: 0px;">
+                        <span>주소<span class="required">*</span></span>
+                        <input type="text" class="input-field" name="recipient_postcode" id="recipient_postcode" style="width:80px; height:26px;" value="<?php echo $address_divide_1; ?>" readonly/>
+                        <button id='postcode_button' type="button" onclick="openZipSearch()" ">우편번호</button>
+                    </label>
+                    <div id='recipient_postcode_hidden' name='recipient_postcode_hidden' style="display: none"><?php echo $address_divide_1; ?></div>
+
+                    <label style="border-bottom: 1px solid white; padding-bottom: 0px;">
+                        <span></span>
+                        <input type="text"class="input-field" name="recipient_addr1" id="recipient_addr1" style="font-size:11px; width:200px; height:30px;" value="<?php echo $address_divide_2; ?>" readonly/>
+                    </label>
+                    <div id='recipient_addr1_hidden' name='recipient_addr1_hidden' style="display: none"><?php echo $address_divide_2; ?></div>
+
+                    <label>
+                        <span></span>
+                        <input type="text" class="input-field" name="recipient_addr2" id="recipient_addr2" style="font-size:11px;width:200px; height:30px;" value="<?php echo $address_divide_3; ?>" />
+                    </label>
+                    <div id='recipient_addr2_hidden' name='recipient_addr2_hidden' style="display: none"><?php echo $address_divide_3; ?></div>
+
+                    <label>
+                        <span>일반전화</span>
+                        <input type="text" class="tel-number-field" name="recipient_tel_no_1" id="recipient_tel_no_1" value="<?php echo $tel_divide_1; ?>" maxlength="4"/>
+                        -
+                        <input type="text" class="tel-number-field" id="recipient_tel_no_2" name="recipient_tel_no_2" value="<?php echo $tel_divide_2; ?>" maxlength="4"/>
+                        -
+                        <input type="text" class="tel-number-field" id="recipient_tel_no_3" name="recipient_tel_no_3" value="<?php echo $tel_divide_3; ?>" maxlength="10"/>
+                    </label>
+                    <div id='recipient_tel_no_1_hidden' name='recipient_tel_no_1_hidden' style="display: none"><?php echo $tel_divide_1; ?></div>
+                    <div id='recipient_tel_no_2_hidden' name='recipient_tel_no_2_hidden' style="display: none"><?php echo $tel_divide_2; ?></div>
+                    <div id='recipient_tel_no_3_hidden' name='recipient_tel_no_3_hidden' style="display: none"><?php echo $tel_divide_3; ?></div>
+
+
+                    <label>
+                        <span>휴대전화<span class="required">*</span></span>
+                        <input type="text" class="tel-number-field" name="recipient_phone_no_1" id="recipient_phone_no_1" value="<?php echo $phone_divide_1; ?>" maxlength="4"/>
+                        -
+                        <input type="text" class="tel-number-field" name="recipient_phone_no_2" id="recipient_phone_no_2" value="<?php echo $phone_divide_2; ?>" maxlength="4"/>
+                        -
+                        <input type="text" class="tel-number-field" name="recipient_phone_no_3" id="recipient_phone_no_3" value="<?php echo $phone_divide_3; ?>" maxlength="10"/>
+                    </label>
+                    <div id='recipient_phone_no_1_hidden' name='recipient_phone_no_1_hidden' style="display: none"><?php echo $phone_divide_1; ?></div>
+                    <div id='recipient_phone_no_2_hidden' name='recipient_phone_no_2_hidden' style="display: none"><?php echo $phone_divide_2; ?></div>
+                    <div id='recipient_phone_no_3_hidden' name='recipient_phone_no_3_hidden' style="display: none"><?php echo $phone_divide_3; ?></div>
+
+
+
+                    <label for="field5">
+                        <span>배송메시지 </span>
+                        <textarea name="recipient_message" id="recipient_message" class="textarea-field" ></textarea>
+                    </label>
 
 
                 </div>
@@ -996,11 +1242,11 @@ $total = mysqli_num_rows($result);
                             </div>
                             <div id="change_none_bank" style="margin-top: 20px; margin-left: 20px;">
                                 <span style="font-size: 12px;">입금자명</span>
-                                <input type="text" class="input-field" style="margin-left: 10px; border: 1px solid #ddd; " name="none_bank_buyer_name" id="none_bank_buyer_name" />
+                                <input type="text" class="input-field" style="margin-left: 10px; border: 1px solid #ddd;" name="none_bank_buyer_name" id="none_bank_buyer_name" />
                                 <br><br>
 
                                 <span style="font-size: 12px; margin-right: 10px;">입금은행</span>
-                                <select name="none_bank_account" style="font-size: 12px; height: 22px;">
+                                <select id="none_bank_account" name="none_bank_account" style="font-size: 12px; height: 22px;">
                                     <option value="none"> --- 선택해주세요 --- </option>
                                     <option value="fitme_bank">우리은행:1002893121128 주식회사 FitMe </option>
                                 </select>
@@ -1044,23 +1290,26 @@ $total = mysqli_num_rows($result);
 
                             <hr color="#ddd" size="1px">
                             <span style="font-size: 12px; font-weight: bold; ">총 적립예정 금액</span>
-                            <span style="font-size: 12px; margin-left:50px; margin-right: 10px; width: 20%; display: inline-block; color: #F76560;"> 680원</span>
-
+                            <span style="font-size: 12px; margin-left:40px; width: 20%; display: inline-block; color: #F76560;"> <?php echo number_format(($order_amount+$order_delivery)/100); ?></span>
+                            <span style="font-size: 12px; margin-right:10px;display: inline-block; color: #F76560;"> 원</span>
                             <br>
 
                             <hr color="#ddd" size="1px">
                             <span style="font-size: 11px; ">상품별 적립금</span>
-                            <span style="font-size: 11px; margin-left:50px; margin-right: 10px; width: 20%; display: inline-block"> 680원</span>
+                            <span style="font-size: 12px; margin-left:50px; width: 20%; display: inline-block; "> <?php echo number_format(($order_amount+$order_delivery)/100); ?></span>
+                            <span style="font-size: 12px; margin-right:10px;display: inline-block;"> 원</span>
 
                             <br>
 
                             <span style="font-size: 11px; ">회원 적립금</span>
-                            <span style="font-size: 11px; margin-left:50px; margin-right: 10px; width: 20%; display: inline-block"> 0원</span>
+                            <span style="font-size: 12px; margin-left:50px; width: 20%; display: inline-block; ">0</span>
+                            <span style="font-size: 12px; margin-right:10px;display: inline-block;"> 원</span>
 
                             <br>
 
                             <span style="font-size: 11px; ">쿠폰 적립금</span>
-                            <span style="font-size: 11px; margin-left:50px; margin-right: 10px; width: 20%; display: inline-block"> 0원</span>
+                            <span style="font-size: 12px; margin-left:50px; width: 20%; display: inline-block; ">0</span>
+                            <span style="font-size: 12px; margin-right:10px;display: inline-block;"> 원</span>
 
                             <br>
 
@@ -1085,23 +1334,26 @@ $total = mysqli_num_rows($result);
 
                             <hr color="#ddd" size="1px">
                             <span style="font-size: 12px; font-weight: bold; ">총 적립예정 금액</span>
-                            <span style="font-size: 12px; margin-left:50px; margin-right: 10px; width: 20%; display: inline-block; color: #F76560;"> 680원</span>
-
+                            <span style="font-size: 12px; margin-left:40px; width: 20%; display: inline-block; color: #F76560;"> <?php echo number_format(($order_amount+$order_delivery)/100); ?></span>
+                            <span style="font-size: 12px; margin-right:10px;display: inline-block; color: #F76560;"> 원</span>
                             <br>
 
                             <hr color="#ddd" size="1px">
                             <span style="font-size: 11px; ">상품별 적립금</span>
-                            <span style="font-size: 11px; margin-left:50px; margin-right: 10px; width: 20%; display: inline-block"> 680원</span>
+                            <span style="font-size: 12px; margin-left:50px; width: 20%; display: inline-block; "> <?php echo number_format(($order_amount+$order_delivery)/100); ?></span>
+                            <span style="font-size: 12px; margin-right:10px;display: inline-block;"> 원</span>
 
                             <br>
 
                             <span style="font-size: 11px; ">회원 적립금</span>
-                            <span style="font-size: 11px; margin-left:50px; margin-right: 10px; width: 20%; display: inline-block"> 0원</span>
+                            <span style="font-size: 12px; margin-left:50px; width: 20%; display: inline-block; ">0</span>
+                            <span style="font-size: 12px; margin-right:10px;display: inline-block;"> 원</span>
 
                             <br>
 
                             <span style="font-size: 11px; ">쿠폰 적립금</span>
-                            <span style="font-size: 11px; margin-left:50px; margin-right: 10px; width: 20%; display: inline-block"> 0원</span>
+                            <span style="font-size: 12px; margin-left:50px; width: 20%; display: inline-block; ">0</span>
+                            <span style="font-size: 12px; margin-right:10px;display: inline-block;"> 원</span>
 
                             <br>
                         </div>
@@ -1125,25 +1377,29 @@ $total = mysqli_num_rows($result);
 
                             <hr color="#ddd" size="1px">
                             <span style="font-size: 12px; font-weight: bold; ">총 적립예정 금액</span>
-                            <span style="font-size: 12px; margin-left:50px; margin-right: 10px; width: 20%; display: inline-block; color: #F76560;"> 680원</span>
-
+                            <span style="font-size: 12px; margin-left:40px; width: 20%; display: inline-block; color: #F76560;"> <?php echo number_format(($order_amount+$order_delivery)/100); ?></span>
+                            <span style="font-size: 12px; margin-right:10px;display: inline-block; color: #F76560;"> 원</span>
                             <br>
 
                             <hr color="#ddd" size="1px">
                             <span style="font-size: 11px; ">상품별 적립금</span>
-                            <span style="font-size: 11px; margin-left:50px; margin-right: 10px; width: 20%; display: inline-block"> 680원</span>
+                            <span style="font-size: 12px; margin-left:50px; width: 20%; display: inline-block; "> <?php echo number_format(($order_amount+$order_delivery)/100); ?></span>
+                            <span style="font-size: 12px; margin-right:10px;display: inline-block;"> 원</span>
 
                             <br>
 
                             <span style="font-size: 11px; ">회원 적립금</span>
-                            <span style="font-size: 11px; margin-left:50px; margin-right: 10px; width: 20%; display: inline-block"> 0원</span>
+                            <span style="font-size: 12px; margin-left:50px; width: 20%; display: inline-block; ">0</span>
+                            <span style="font-size: 12px; margin-right:10px;display: inline-block;"> 원</span>
 
                             <br>
 
                             <span style="font-size: 11px; ">쿠폰 적립금</span>
-                            <span style="font-size: 11px; margin-left:50px; margin-right: 10px; width: 20%; display: inline-block"> 0원</span>
+                            <span style="font-size: 12px; margin-left:50px; width: 20%; display: inline-block; ">0</span>
+                            <span style="font-size: 12px; margin-right:10px;display: inline-block;"> 원</span>
 
                             <br>
+
                         </div>
                         <div id="change_none_bank_button" style="text-align: end;">
                             <br>
@@ -1155,29 +1411,32 @@ $total = mysqli_num_rows($result);
                             <div style="font-size: 12px; margin-right: 10px; display: inline-block;">원</div>
 
                             <br><br>
-                            <button id="method_box2_button" type="button" style="width:90%; height: 50px; margin-right: 5%; margin-left: 5%;">결제하기
+                            <button id="method_box2_button" type="button" onclick="requestPay_none()" style="width:90%; height: 50px; margin-right: 5%; margin-left: 5%;">결제하기
                             </button>
                             <br>
 
                             <hr color="#ddd" size="1px">
                             <span style="font-size: 12px; font-weight: bold; ">총 적립예정 금액</span>
-                            <span style="font-size: 12px; margin-left:50px; margin-right: 10px; width: 20%; display: inline-block; color: #F76560;"> 680원</span>
-
+                            <span style="font-size: 12px; margin-left:40px; width: 20%; display: inline-block; color: #F76560;"> <?php echo number_format(($order_amount+$order_delivery)/100); ?></span>
+                            <span style="font-size: 12px; margin-right:10px;display: inline-block; color: #F76560;"> 원</span>
                             <br>
 
                             <hr color="#ddd" size="1px">
                             <span style="font-size: 11px; ">상품별 적립금</span>
-                            <span style="font-size: 11px; margin-left:50px; margin-right: 10px; width: 20%; display: inline-block"> 680원</span>
+                            <span style="font-size: 12px; margin-left:50px; width: 20%; display: inline-block; "> <?php echo number_format(($order_amount+$order_delivery)/100); ?></span>
+                            <span style="font-size: 12px; margin-right:10px;display: inline-block;"> 원</span>
 
                             <br>
 
                             <span style="font-size: 11px; ">회원 적립금</span>
-                            <span style="font-size: 11px; margin-left:50px; margin-right: 10px; width: 20%; display: inline-block"> 0원</span>
+                            <span style="font-size: 12px; margin-left:50px; width: 20%; display: inline-block; ">0</span>
+                            <span style="font-size: 12px; margin-right:10px;display: inline-block;"> 원</span>
 
                             <br>
 
                             <span style="font-size: 11px; ">쿠폰 적립금</span>
-                            <span style="font-size: 11px; margin-left:50px; margin-right: 10px; width: 20%; display: inline-block"> 0원</span>
+                            <span style="font-size: 12px; margin-left:50px; width: 20%; display: inline-block; ">0</span>
+                            <span style="font-size: 12px; margin-right:10px;display: inline-block;"> 원</span>
 
                             <br>
                         </div>
@@ -1198,23 +1457,26 @@ $total = mysqli_num_rows($result);
 
                             <hr color="#ddd" size="1px">
                             <span style="font-size: 12px; font-weight: bold; ">총 적립예정 금액</span>
-                            <span style="font-size: 12px; margin-left:50px; margin-right: 10px; width: 20%; display: inline-block; color: #F76560;"> 680원</span>
-
+                            <span style="font-size: 12px; margin-left:40px; width: 20%; display: inline-block; color: #F76560;"> <?php echo number_format(($order_amount+$order_delivery)/100); ?></span>
+                            <span style="font-size: 12px; margin-right:10px;display: inline-block; color: #F76560;"> 원</span>
                             <br>
 
                             <hr color="#ddd" size="1px">
                             <span style="font-size: 11px; ">상품별 적립금</span>
-                            <span style="font-size: 11px; margin-left:50px; margin-right: 10px; width: 20%; display: inline-block"> 680원</span>
+                            <span style="font-size: 12px; margin-left:50px; width: 20%; display: inline-block; "> <?php echo number_format(($order_amount+$order_delivery)/100); ?></span>
+                            <span style="font-size: 12px; margin-right:10px;display: inline-block;"> 원</span>
 
                             <br>
 
                             <span style="font-size: 11px; ">회원 적립금</span>
-                            <span style="font-size: 11px; margin-left:50px; margin-right: 10px; width: 20%; display: inline-block"> 0원</span>
+                            <span style="font-size: 12px; margin-left:50px; width: 20%; display: inline-block; ">0</span>
+                            <span style="font-size: 12px; margin-right:10px;display: inline-block;"> 원</span>
 
                             <br>
 
                             <span style="font-size: 11px; ">쿠폰 적립금</span>
-                            <span style="font-size: 11px; margin-left:50px; margin-right: 10px; width: 20%; display: inline-block"> 0원</span>
+                            <span style="font-size: 12px; margin-left:50px; width: 20%; display: inline-block; ">0</span>
+                            <span style="font-size: 12px; margin-right:10px;display: inline-block;"> 원</span>
 
                             <br>
                         </div>
@@ -1229,24 +1491,24 @@ $total = mysqli_num_rows($result);
                 <div id="changeTextArea_button2">
 
                     <div id="change_card_button2" style="text-align: end;">
-                        <button id="method_box2_button" type="button" onclick="requestPay_card()" style="width:30%; height: 50px; margin-right: 35%; margin-left: 35%;"> 카드 결제</button>
+                        <button id="method_box2_button" type="button" onclick="requestPay_card()" style="width:30%; height: 50px; margin-right: 35%; margin-left: 35%;"> <span style="font-size: 11px; ">카드 결제</span></button>
                     </div>
 
 
                     <div id="change_trans_button2" style="text-align: end;">
-                        <button id="method_box2_button" type="button" onclick="requestPay_trans()" style="width:30%; height: 50px; margin-right: 35%; margin-left: 35%;"> 실시간계좌 결제</button>
+                        <button id="method_box2_button" type="button" onclick="requestPay_trans()" style="width:30%; height: 50px; margin-right: 35%; margin-left: 35%;"> <span style="font-size: 11px; ">실시간계좌</span></button>
                     </div>
 
                     <div id="change_phone_button2" style="text-align: end;">
-                        <button id="method_box2_button" type="button" onclick="requestPay_phone()" style="width:30%; height: 50px; margin-right: 35%; margin-left: 35%;"> 휴대폰 결제</button>
+                        <button id="method_box2_button" type="button" onclick="requestPay_phone()" style="width:30%; height: 50px; margin-right: 35%; margin-left: 35%;"> <span style="font-size: 11px; ">휴대폰 결제</span></button>
                     </div>
 
                     <div id="change_none_bank_button2" style="text-align: end;">
-                        <button id="method_box2_button" type="button" style="width:30%; height: 50px; margin-right: 35%; margin-left: 35%;"> 무통장 입금</button>
+                        <button id="method_box2_button" type="button" onclick="requestPay_none()" style="width:30%; height: 50px; margin-right: 35%; margin-left: 35%;"> <span style="font-size: 11px; ">무통장 입금</span></button>
                     </div>
 
                     <div id="change_vbank_button2" style="text-align: end;">
-                        <button id="method_box2_button" type="button" onclick="requestPay_vbank()" style="width:30%; height: 50px; margin-right: 35%; margin-left: 35%;"> 가상계좌 결제</button>
+                        <button id="method_box2_button" type="button" onclick="requestPay_vbank()" style="width:30%; height: 50px; margin-right: 35%; margin-left: 35%;"> <span style="font-size: 11px; ">가상계좌</span></button>
                     </div>
 
 
@@ -1299,37 +1561,52 @@ $total = mysqli_num_rows($result);
         // IMP.request_pay(param, callback) 호출
 
 
-        // 구매 금액
-        var buy_amount = Number($('#box3_purchase_amount_hidden').text());
+        //주문한 유저아이디
+        var user_id = $('#user_id').text();
+        //주문한 상품 목록
+        var product_information_group_json = $('#product_information_group_json').text();
 
-        // 구매자 이름
-        var buyer_name = $('#buyer_name').val();
-        // 구매자 이메일
-        var buyer_email = $('#buyer_email').val();
+
+
+        // 주문자 이름
+        var order_name = $('#order_name').val();
+        // 주문자 휴대전화번호
+        var order_phone_no_1 = $('#order_phone_no_1').val();
+        var order_phone_no_2 = $('#order_phone_no_2').val();
+        var order_phone_no_3 = $('#order_phone_no_3').val();
+        var order_phone = order_phone_no_1 + "-" + order_phone_no_2+"-"+ order_phone_no_3;
+        // 주문자 이메일
+        var order_email = $('#order_email').val();
+
+        //수령인 이름
+        var recipient_name = $('#recipient_name').val();
+
+
+        //수령인 주소
+        var recipient_postcode = $('#recipient_postcode').val();
+        var recipient_addr1 = $('#recipient_addr1').val();
+        var recipient_addr2 = $('#recipient_addr2').val();
+        var recipient_addr = recipient_postcode + "/" + recipient_addr1 + "/" + recipient_addr2;
 
         // 구매자 일반 전화번호
-        var tel_no_1 = $('#tel_no_1').val();
-        var tel_no_2 = $('#tel_no_2').val();
-        var tel_no_3 = $('#tel_no_3').val();
-        var buyer_tel = tel_no_1 + "-" + tel_no_2 +"-"+ tel_no_3;
+        var recipient_tel_no_1 = $('#recipient_tel_no_1').val();
+        var recipient_tel_no_2 = $('#recipient_tel_no_2').val();
+        var recipient_tel_no_3 = $('#recipient_tel_no_3').val();
+        var recipient_buyer_tel = recipient_tel_no_1 + "-" + recipient_tel_no_2 +"-"+ recipient_tel_no_3;
 
 
         // 구매자 핸드폰 전화번호
-        var phone_no_1 = $('#phone_no_1').val();
-        var phone_no_2 = $('#phone_no_2').val();
-        var phone_no_3 = $('#phone_no_3').val();
-        var buyer_phone = phone_no_1 + "-" + phone_no_2+"-"+ phone_no_3;
+        var recipient_phone_no_1 = $('#recipient_phone_no_1').val();
+        var recipient_phone_no_2 = $('#recipient_phone_no_2').val();
+        var recipient_phone_no_3 = $('#recipient_phone_no_3').val();
+        var recipient_buyer_phone = recipient_phone_no_1 + "-" + recipient_phone_no_2+"-"+ recipient_phone_no_3;
 
-        // 구매자 주소
-        var buyer_addr1 = $('#buyer_addr1').val();
-        var buyer_addr2 = $('#buyer_addr2').val();
-        var buyer_addr = buyer_addr1 + " " + buyer_addr2;
-
-        // 구매자 우편번호
-        var buyer_postcode = $('#buyer_postcode').val();
         // 배송메시지
-        var  buyer_message = $('#buyer_message').val();
+        var recipient_message = $('#recipient_message').val();
 
+
+        // 구매 금액
+        var buy_amount = Number($('#box3_purchase_amount_hidden').text());
         //구매 첫번째 상품
         var buy_product_first = $('#buy_product_first').text();
         //구매 상품 수
@@ -1348,43 +1625,54 @@ $total = mysqli_num_rows($result);
         }
 
 
-        if(buyer_name==""){
-            alert("이름을 입력해주세요");
+        if(order_name==""){
+            alert("주문자 이름을 입력해주세요");
             return;
-        }else if(buyer_email == ""){
-            alert("이메일을 입력해주세요");
+        }else if(order_phone_no_1 == ""){
+            alert("주문자 전화번호를 입력해주세요");
             return;
-        }else if(phone_no_1 == ""){
-            alert("핸드폰 번호를 정확히 입력해주세요");
+        }else if(order_phone_no_2 == ""){
+            alert("주문자 전화번호를 입력해주세요");
             return;
-        }else if(phone_no_2 == ""){
-            alert("핸드폰 번호를 정확히 입력해주세요");
+        }else if(order_phone_no_3 == ""){
+            alert("주문자 전화번호를 입력해주세요");
             return;
-        }else if(phone_no_3 == ""){
-            alert("핸드폰 번호를 정확히 입력해주세요");
+        }else if(order_email == ""){
+            alert("주문자 이메일을 입력해주세요");
             return;
-        }else if(buyer_postcode == ""){
-            alert("우편번호를 정확히 입력해주세요");
+        }else if(recipient_name == ""){
+            alert("수령인 이름을 입력해주세요");
             return;
-        }else if(buyer_addr1 == ""){
-            alert("주소를 정확히 입력해주세요");
+        }else if(recipient_postcode == ""){
+            alert("우편번호를 입력해주세요");
             return;
-        }else if(buyer_addr2 == ""){
-            alert("주소를 정확히 입력해주세요");
+        }else if(recipient_addr1 == ""){
+            alert("수령인 주소를 정확히 입력해주세요");
+            return;
+        }else if(recipient_addr2 == ""){
+            alert("수령인 주소를 정확히 입력해주세요");
+            return;
+        }else if(recipient_phone_no_1 == ""){
+            alert("수령인 핸드폰 번호를 정확히 입력해주세요");
+            return;
+        }else if(recipient_phone_no_2 == ""){
+            alert("수령인 핸드폰 번호를 정확히 입력해주세요");
+            return;
+        }else if(recipient_phone_no_3 == ""){
+            alert("수령인 핸드폰 번호를 정확히 입력해주세요");
             return;
         }else{
             IMP.request_pay({
                 pg : 'html5_inicis',
                 pay_method : 'card',
                 merchant_uid : 'merchant_' + new Date().getTime(),
-                name : buy_product_name,
-                amount : buy_amount,
-                buyer_email: buyer_email,
-                buyer_name: buyer_name,
-                buyer_tel: buyer_phone,
-                buyer_addr: buyer_addr,
-                buyer_postcode: buyer_postcode
+                name: buy_product_name,
+                amount: buy_amount,
+                buyer_tel: order_phone,
+                //결제 완료 후 모바일에서 이동하는 화면
+                m_redirect_url : 'https://www.naver.com/'
             }, function (rsp) {
+
                 if (rsp.success) {
                     var msg = '결제가 완료되었습니다.';
                     msg += '고유ID : ' + rsp.imp_uid;
@@ -1392,36 +1680,39 @@ $total = mysqli_num_rows($result);
                     msg += '결제 금액 : ' + rsp.paid_amount;
                     msg += '카드 승인번호 : ' + rsp.apply_num;
 
-                    post_to_url('http://49.247.136.36/main/cart/order_finish.php', {'name':'jeyeon','age':'23','tel':buyer_tel, 'message':buyer_message})
+                    //location.href="http://49.247.136.36/main/cart/order_finish_html.php";
+
+                    alert(msg);
+                    //location.href="http://49.247.136.36/main/cart/order_finish_html.php";
+                    //결제 완료 시 넘길 정보
+
+                    //주문인 아이디
+                    //상품정보 (상품키, 사이즈, 색상, 수량이 담긴 json파일)
+                    //입력정보 (주문자 이름, 주문자 전화번호, 주문자 이메일
+                    //         수령인 이름, 수령인 주소, 수령인 일반번호, 수령인 핸드폰번호, 수령인 배송메시지)
+                    //결제정보 (결제수단, 고유ID, 상점 거래ID , 결제금액, 카드승인번호, 무통장 입금자명, 무통장 입금은행, 결제여부)
+
+
+                    //payment_id (무통장 입금 X - 고유 ID, 무통장입금 O - 입금자명)
+                    //payment_bank (무통장 입금 X - 카드승인번호, 무통장입금 O - 입금은행)
+
+                    post_to_url('http://49.247.136.36/main/cart/order_save.php',
+                        {'user_id':user_id,
+                         'product_information_group_json':product_information_group_json,
+                         'order_name':order_name,'order_phone':order_phone,'order_email':order_email,'recipient_name':recipient_name,'recipient_addr':recipient_addr,'recipient_tel':recipient_buyer_tel,'recipient_phone':recipient_buyer_phone,'recipient_message':recipient_message,
+                         'payment_method':'card','payment_imp_uid':rsp.imp_uid,'payment_merchant_uid':rsp.merchant_uid, 'payment_amount':rsp.paid_amount, 'payment_apply_num':rsp.apply_num,'nonebank_name':'','nonebank_bank':'','payment_boolean':'yes'}
+                    )
 
 
                 } else {
                     var msg = '결제에 실패하였습니다.';
                     msg += '에러내용 : ' + rsp.error_msg;
+
+                    alert(msg);
+
+
                 }
 
-                /*
-                var msg9 = '결제가 완료되었습니다.';
-                msg9 += '결제금액 : ' + buy_amount;
-                msg9 += '이메일 : ' + buyer_email;
-                msg9 += '주문인 : ' + buyer_name;
-                msg9 += '전화번호 : ' + buyer_phone;
-                msg9 += '주소 : ' + buyer_addr;
-                msg9 += '우편번호 : ' + buyer_postcode;
-                */
-
-                //alert(msg);
-
-                //post_to_url('http://49.247.136.36/main/cart/order_finish.php', {'name':'jeyeon','age':'23'})
-                //alert(msg9);
-
-
-
-                // 결제에 성공하면 결제완료 페이지로 이동시킨다
-                // POST - 주문번호, 주문일자, 결제 금액, 결제수단,
-                //      - 상품이름, 상품컬러, 상품사이즈, 상품 수량, 상품가격
-                //      - 이름, 우편번호, 주소, 일반전화, 휴대전화, 배송메시지
-                // DB에 저장하고 -> 결제완료 페이지에서 띄워주가
 
 
             });
@@ -1436,40 +1727,55 @@ $total = mysqli_num_rows($result);
     // 실시간 계좌이체
     function requestPay_trans() {
 
-        // IMP.request_pay(param, callback) 호출
 
-        // 구매 금액
-        var buy_amount = Number($('#box3_purchase_amount_hidden').text());
+        //주문한 유저아이디
+        var user_id = $('#user_id').text();
+        //주문한 상품 목록
+        var product_information_group_json = $('#product_information_group_json').text();
 
-        // 구매자 이름
-        var buyer_name = $('#buyer_name').val();
-        // 구매자 이메일
-        var buyer_email = $('#buyer_email').val();
+        // 주문자 이름
+        var order_name = $('#order_name').val();
+        // 주문자 휴대전화번호
+        var order_phone_no_1 = $('#order_phone_no_1').val();
+        var order_phone_no_2 = $('#order_phone_no_2').val();
+        var order_phone_no_3 = $('#order_phone_no_3').val();
+        var order_phone = order_phone_no_1 + "-" + order_phone_no_2+"-"+ order_phone_no_3;
+        // 주문자 이메일
+        var order_email = $('#order_email').val();
+
+        //수령인 이름
+        var recipient_name = $('#recipient_name').val();
+
+
+        //수령인 주소
+        var recipient_postcode = $('#recipient_postcode').val();
+        var recipient_addr1 = $('#recipient_addr1').val();
+        var recipient_addr2 = $('#recipient_addr2').val();
+        var recipient_addr = recipient_postcode + "/" + recipient_addr1 + "/" + recipient_addr2;
 
         // 구매자 일반 전화번호
-        var tel_no_1 = $('#tel_no_1').val();
-        var tel_no_2 = $('#tel_no_2').val();
-        var tel_no_3 = $('#tel_no_3').val();
-        var buyer_tel = tel_no_1 + "-" + tel_no_2 +"-"+ tel_no_3;
+        var recipient_tel_no_1 = $('#recipient_tel_no_1').val();
+        var recipient_tel_no_2 = $('#recipient_tel_no_2').val();
+        var recipient_tel_no_3 = $('#recipient_tel_no_3').val();
+        var recipient_buyer_tel = recipient_tel_no_1 + "-" + recipient_tel_no_2 +"-"+ recipient_tel_no_3;
 
 
         // 구매자 핸드폰 전화번호
-        var phone_no_1 = $('#phone_no_1').val();
-        var phone_no_2 = $('#phone_no_2').val();
-        var phone_no_3 = $('#phone_no_3').val();
-        var buyer_phone = phone_no_1 + "-" + phone_no_2+"-"+ phone_no_3;
+        var recipient_phone_no_1 = $('#recipient_phone_no_1').val();
+        var recipient_phone_no_2 = $('#recipient_phone_no_2').val();
+        var recipient_phone_no_3 = $('#recipient_phone_no_3').val();
+        var recipient_buyer_phone = recipient_phone_no_1 + "-" + recipient_phone_no_2+"-"+ recipient_phone_no_3;
 
-        // 구매자 주소
-        var buyer_addr1 = $('#buyer_addr1').val();
-        var buyer_addr2 = $('#buyer_addr2').val();
-        var buyer_addr = buyer_addr1 + " " + buyer_addr2;
-
-        // 구매자 우편번호
-        var buyer_postcode = $('#buyer_postcode').val();
         // 배송메시지
-        var  buyer_message = $('#buyer_message').val();
+        var recipient_message = $('#recipient_message').val();
 
 
+        //예금주 명
+        var trans_buyer_name = $('#trans_buyer_name').val();
+
+
+        // 구매 금액
+        var buy_amount = Number($('#box3_purchase_amount_hidden').text());
         //구매 첫번째 상품
         var buy_product_first = $('#buy_product_first').text();
         //구매 상품 수
@@ -1487,29 +1793,45 @@ $total = mysqli_num_rows($result);
 
         }
 
-        if(buyer_name==""){
-            alert("이름을 입력해주세요");
+
+        if(order_name==""){
+            alert("주문자 이름을 입력해주세요");
             return;
-        }else if(buyer_email == ""){
-            alert("이메일을 입력해주세요");
+        }else if(order_phone_no_1 == ""){
+            alert("주문자 전화번호를 입력해주세요");
             return;
-        }else if(phone_no_1 == ""){
-            alert("핸드폰 번호를 정확히 입력해주세요");
+        }else if(order_phone_no_2 == ""){
+            alert("주문자 전화번호를 입력해주세요");
             return;
-        }else if(phone_no_2 == ""){
-            alert("핸드폰 번호를 정확히 입력해주세요");
+        }else if(order_phone_no_3 == ""){
+            alert("주문자 전화번호를 입력해주세요");
             return;
-        }else if(phone_no_3 == ""){
-            alert("핸드폰 번호를 정확히 입력해주세요");
+        }else if(order_email == ""){
+            alert("주문자 이메일을 입력해주세요");
             return;
-        }else if(buyer_postcode == ""){
-            alert("우편번호를 정확히 입력해주세요");
+        }else if(recipient_name == ""){
+            alert("수령인 이름을 입력해주세요");
             return;
-        }else if(buyer_addr1 == ""){
-            alert("주소를 정확히 입력해주세요");
+        }else if(recipient_postcode == ""){
+            alert("우편번호를 입력해주세요");
             return;
-        }else if(buyer_addr2 == ""){
-            alert("주소를 정확히 입력해주세요");
+        }else if(recipient_addr1 == ""){
+            alert("수령인 주소를 정확히 입력해주세요");
+            return;
+        }else if(recipient_addr2 == ""){
+            alert("수령인 주소를 정확히 입력해주세요");
+            return;
+        }else if(recipient_phone_no_1 == ""){
+            alert("수령인 핸드폰 번호를 정확히 입력해주세요");
+            return;
+        }else if(recipient_phone_no_2 == ""){
+            alert("수령인 핸드폰 번호를 정확히 입력해주세요");
+            return;
+        }else if(recipient_phone_no_3 == ""){
+            alert("수령인 핸드폰 번호를 정확히 입력해주세요");
+            return;
+        }else if(trans_buyer_name == ""){
+            alert("예금주명을 입력해주세요");
             return;
         }else if($("#checkbox_trans").is(":checked") == false) {
             alert("에스크로 구매안전 서비스 적용에 체크해주세요");
@@ -1517,15 +1839,12 @@ $total = mysqli_num_rows($result);
         }else{
             IMP.request_pay({
                 pg: 'html5_inicis',
+                escrow: true,
                 pay_method: 'trans',
                 merchant_uid: 'merchant_' + new Date().getTime(),
                 name: buy_product_name,
                 amount: buy_amount,
-                buyer_email: buyer_email,
-                buyer_name: buyer_name,
-                buyer_tel: buyer_phone,
-                buyer_addr: buyer_addr,
-                buyer_postcode: buyer_postcode
+                buyer_tel: order_phone
             }, function (rsp) {
                 if (rsp.success) {
                     var msg = '결제가 완료되었습니다.';
@@ -1534,8 +1853,26 @@ $total = mysqli_num_rows($result);
                     msg += '결제 금액 : ' + rsp.paid_amount;
                     msg += '카드 승인번호 : ' + rsp.apply_num;
 
-                    post_to_url('http://49.247.136.36/main/cart/order_finish.php', {'name':'jeyeon','age':'23','tel':buyer_tel, 'message':buyer_message})
+                    alert(msg);
+                    //location.href="http://49.247.136.36/main/cart/order_finish_html.php";
+                    //결제 완료 시 넘길 정보
 
+                    //주문인 아이디
+                    //상품정보 (상품키, 사이즈, 색상, 수량이 담긴 json파일)
+                    //입력정보 (주문자 이름, 주문자 전화번호, 주문자 이메일
+                    //         수령인 이름, 수령인 주소, 수령인 일반번호, 수령인 핸드폰번호, 수령인 배송메시지)
+                    //결제정보 (결제수단, 고유ID, 상점 거래ID , 결제금액, 카드승인번호, 무통장 입금자명, 무통장 입금은행, 결제여부)
+
+
+                    //payment_id (무통장 입금 X - 고유 ID, 무통장입금 O - 입금자명)
+                    //payment_bank (무통장 입금 X - 카드승인번호, 무통장입금 O - 입금은행)
+
+                    post_to_url('http://49.247.136.36/main/cart/order_save.php',
+                        {'user_id':user_id,
+                            'product_information_group_json':product_information_group_json,
+                            'order_name':order_name,'order_phone':order_phone,'order_email':order_email,'recipient_name':recipient_name,'recipient_addr':recipient_addr,'recipient_tel':recipient_buyer_tel,'recipient_phone':recipient_buyer_phone,'recipient_message':recipient_message,
+                            'payment_method':'trans','payment_imp_uid':rsp.imp_uid,'payment_merchant_uid':rsp.merchant_uid, 'payment_amount':rsp.paid_amount, 'payment_apply_num':rsp.apply_num,'nonebank_name':'','nonebank_bank':'','payment_boolean':'yes'}
+                    )
                 } else {
                     var msg = '결제에 실패하였습니다.';
                     msg += '에러내용 : ' + rsp.error_msg;
@@ -1564,36 +1901,50 @@ $total = mysqli_num_rows($result);
     function requestPay_phone() {
         // IMP.request_pay(param, callback) 호출
 
-        // 구매 금액
-        var buy_amount = Number($('#box3_purchase_amount_hidden').text());
-        // 구매자 이름
-        var buyer_name = $('#buyer_name').val();
-        // 구매자 이메일
-        var buyer_email = $('#buyer_email').val();
+        //주문한 유저아이디
+        var user_id = $('#user_id').text();
+        //주문한 상품 목록
+        var product_information_group_json = $('#product_information_group_json').text();
+
+        // 주문자 이름
+        var order_name = $('#order_name').val();
+        // 주문자 휴대전화번호
+        var order_phone_no_1 = $('#order_phone_no_1').val();
+        var order_phone_no_2 = $('#order_phone_no_2').val();
+        var order_phone_no_3 = $('#order_phone_no_3').val();
+        var order_phone = order_phone_no_1 + "-" + order_phone_no_2+"-"+ order_phone_no_3;
+        // 주문자 이메일
+        var order_email = $('#order_email').val();
+
+        //수령인 이름
+        var recipient_name = $('#recipient_name').val();
+
+
+        //수령인 주소
+        var recipient_postcode = $('#recipient_postcode').val();
+        var recipient_addr1 = $('#recipient_addr1').val();
+        var recipient_addr2 = $('#recipient_addr2').val();
+        var recipient_addr = recipient_postcode + "/" + recipient_addr1 + "/" + recipient_addr2;
 
         // 구매자 일반 전화번호
-        var tel_no_1 = $('#tel_no_1').val();
-        var tel_no_2 = $('#tel_no_2').val();
-        var tel_no_3 = $('#tel_no_3').val();
-        var buyer_tel = tel_no_1 + "-" + tel_no_2 +"-"+ tel_no_3;
+        var recipient_tel_no_1 = $('#recipient_tel_no_1').val();
+        var recipient_tel_no_2 = $('#recipient_tel_no_2').val();
+        var recipient_tel_no_3 = $('#recipient_tel_no_3').val();
+        var recipient_buyer_tel = recipient_tel_no_1 + "-" + recipient_tel_no_2 +"-"+ recipient_tel_no_3;
 
 
         // 구매자 핸드폰 전화번호
-        var phone_no_1 = $('#phone_no_1').val();
-        var phone_no_2 = $('#phone_no_2').val();
-        var phone_no_3 = $('#phone_no_3').val();
-        var buyer_phone = phone_no_1 + "-" + phone_no_2+"-"+ phone_no_3;
+        var recipient_phone_no_1 = $('#recipient_phone_no_1').val();
+        var recipient_phone_no_2 = $('#recipient_phone_no_2').val();
+        var recipient_phone_no_3 = $('#recipient_phone_no_3').val();
+        var recipient_buyer_phone = recipient_phone_no_1 + "-" + recipient_phone_no_2+"-"+ recipient_phone_no_3;
 
-        // 구매자 주소
-        var buyer_addr1 = $('#buyer_addr1').val();
-        var buyer_addr2 = $('#buyer_addr2').val();
-        var buyer_addr = buyer_addr1 + " " + buyer_addr2;
-
-        // 구매자 우편번호
-        var buyer_postcode = $('#buyer_postcode').val();
         // 배송메시지
-        var  buyer_message = $('#buyer_message').val();
+        var recipient_message = $('#recipient_message').val();
 
+
+        // 구매 금액
+        var buy_amount = Number($('#box3_purchase_amount_hidden').text());
         //구매 첫번째 상품
         var buy_product_first = $('#buy_product_first').text();
         //구매 상품 수
@@ -1612,29 +1963,41 @@ $total = mysqli_num_rows($result);
         }
 
 
-        if(buyer_name==""){
-            alert("이름을 입력해주세요");
+        if(order_name==""){
+            alert("주문자 이름을 입력해주세요");
             return;
-        }else if(buyer_email == ""){
-            alert("이메일을 입력해주세요");
+        }else if(order_phone_no_1 == ""){
+            alert("주문자 전화번호를 입력해주세요");
             return;
-        }else if(phone_no_1 == ""){
-            alert("핸드폰 번호를 정확히 입력해주세요");
+        }else if(order_phone_no_2 == ""){
+            alert("주문자 전화번호를 입력해주세요");
             return;
-        }else if(phone_no_2 == ""){
-            alert("핸드폰 번호를 정확히 입력해주세요");
+        }else if(order_phone_no_3 == ""){
+            alert("주문자 전화번호를 입력해주세요");
             return;
-        }else if(phone_no_3 == ""){
-            alert("핸드폰 번호를 정확히 입력해주세요");
+        }else if(order_email == ""){
+            alert("주문자 이메일을 입력해주세요");
             return;
-        }else if(buyer_postcode == ""){
-            alert("우편번호를 정확히 입력해주세요");
+        }else if(recipient_name == ""){
+            alert("수령인 이름을 입력해주세요");
             return;
-        }else if(buyer_addr1 == ""){
-            alert("주소를 정확히 입력해주세요");
+        }else if(recipient_postcode == ""){
+            alert("우편번호를 입력해주세요");
             return;
-        }else if(buyer_addr2 == ""){
-            alert("주소를 정확히 입력해주세요");
+        }else if(recipient_addr1 == ""){
+            alert("수령인 주소를 정확히 입력해주세요");
+            return;
+        }else if(recipient_addr2 == ""){
+            alert("수령인 주소를 정확히 입력해주세요");
+            return;
+        }else if(recipient_phone_no_1 == ""){
+            alert("수령인 핸드폰 번호를 정확히 입력해주세요");
+            return;
+        }else if(recipient_phone_no_2 == ""){
+            alert("수령인 핸드폰 번호를 정확히 입력해주세요");
+            return;
+        }else if(recipient_phone_no_3 == ""){
+            alert("수령인 핸드폰 번호를 정확히 입력해주세요");
             return;
         }else{
             IMP.request_pay({
@@ -1643,11 +2006,7 @@ $total = mysqli_num_rows($result);
                 merchant_uid: 'merchant_' + new Date().getTime(),
                 name: buy_product_name,
                 amount: buy_amount,
-                buyer_email: buyer_email,
-                buyer_name: buyer_name,
-                buyer_tel: buyer_phone,
-                buyer_addr: buyer_addr,
-                buyer_postcode: buyer_postcode
+                buyer_tel: order_phone
             }, function (rsp) {
                 if (rsp.success) {
                     var msg = '결제가 완료되었습니다.';
@@ -1656,7 +2015,27 @@ $total = mysqli_num_rows($result);
                     msg += '결제 금액 : ' + rsp.paid_amount;
                     msg += '카드 승인번호 : ' + rsp.apply_num;
 
-                    post_to_url('http://49.247.136.36/main/cart/order_finish.php', {'name':'jeyeon','age':'23','tel':buyer_tel, 'message':buyer_message})
+                    alert(msg);
+                    //location.href="http://49.247.136.36/main/cart/order_finish_html.php";
+                    //결제 완료 시 넘길 정보
+
+                    //주문인 아이디
+                    //상품정보 (상품키, 사이즈, 색상, 수량이 담긴 json파일)
+                    //입력정보 (주문자 이름, 주문자 전화번호, 주문자 이메일
+                    //         수령인 이름, 수령인 주소, 수령인 일반번호, 수령인 핸드폰번호, 수령인 배송메시지)
+                    //결제정보 (결제수단, 고유ID, 상점 거래ID , 결제금액, 카드승인번호, 무통장 입금자명, 무통장 입금은행, 결제여부)
+
+
+                    //payment_id (무통장 입금 X - 고유 ID, 무통장입금 O - 입금자명)
+                    //payment_bank (무통장 입금 X - 카드승인번호, 무통장입금 O - 입금은행)
+
+                    post_to_url('http://49.247.136.36/main/cart/order_save.php',
+                        {'user_id':user_id,
+                            'product_information_group_json':product_information_group_json,
+                            'order_name':order_name,'order_phone':order_phone,'order_email':order_email,'recipient_name':recipient_name,'recipient_addr':recipient_addr,'recipient_tel':recipient_buyer_tel,'recipient_phone':recipient_buyer_phone,'recipient_message':recipient_message,
+                            'payment_method':'phone','payment_imp_uid':rsp.imp_uid,'payment_merchant_uid':rsp.merchant_uid, 'payment_amount':rsp.paid_amount, 'payment_apply_num':rsp.apply_num,'nonebank_name':'','nonebank_bank':'','payment_boolean':'yes'}
+                    )
+
 
                 } else {
                     var msg = '결제에 실패하였습니다.';
@@ -1680,40 +2059,183 @@ $total = mysqli_num_rows($result);
 
     }
 
-    // 가상계좌
-    function requestPay_vbank() {
-        // IMP.request_pay(param, callback) 호출
+    // 무통장 입금
+    function requestPay_none(){
 
-        // 구매 금액
-        var buy_amount = Number($('#box3_purchase_amount_hidden').text());
-        // 구매자 이름
-        var buyer_name = $('#buyer_name').val();
-        // 구매자 이메일
-        var buyer_email = $('#buyer_email').val();
+        //주문한 유저아이디
+        var user_id = $('#user_id').text();
+        //주문한 상품 목록
+        var product_information_group_json = $('#product_information_group_json').text();
+
+        // 주문자 이름
+        var order_name = $('#order_name').val();
+        // 주문자 휴대전화번호
+        var order_phone_no_1 = $('#order_phone_no_1').val();
+        var order_phone_no_2 = $('#order_phone_no_2').val();
+        var order_phone_no_3 = $('#order_phone_no_3').val();
+        var order_phone = order_phone_no_1 + "-" + order_phone_no_2+"-"+ order_phone_no_3;
+        // 주문자 이메일
+        var order_email = $('#order_email').val();
+
+        //수령인 이름
+        var recipient_name = $('#recipient_name').val();
+
+
+        //수령인 주소
+        var recipient_postcode = $('#recipient_postcode').val();
+        var recipient_addr1 = $('#recipient_addr1').val();
+        var recipient_addr2 = $('#recipient_addr2').val();
+        var recipient_addr = recipient_postcode + "/" + recipient_addr1 + "/" + recipient_addr2;
 
         // 구매자 일반 전화번호
-        var tel_no_1 = $('#tel_no_1').val();
-        var tel_no_2 = $('#tel_no_2').val();
-        var tel_no_3 = $('#tel_no_3').val();
-        var buyer_tel = tel_no_1 + "-" + tel_no_2 +"-"+ tel_no_3;
+        var recipient_tel_no_1 = $('#recipient_tel_no_1').val();
+        var recipient_tel_no_2 = $('#recipient_tel_no_2').val();
+        var recipient_tel_no_3 = $('#recipient_tel_no_3').val();
+        var recipient_buyer_tel = recipient_tel_no_1 + "-" + recipient_tel_no_2 +"-"+ recipient_tel_no_3;
 
 
         // 구매자 핸드폰 전화번호
-        var phone_no_1 = $('#phone_no_1').val();
-        var phone_no_2 = $('#phone_no_2').val();
-        var phone_no_3 = $('#phone_no_3').val();
-        var buyer_phone = phone_no_1 + "-" + phone_no_2+"-"+ phone_no_3;
+        var recipient_phone_no_1 = $('#recipient_phone_no_1').val();
+        var recipient_phone_no_2 = $('#recipient_phone_no_2').val();
+        var recipient_phone_no_3 = $('#recipient_phone_no_3').val();
+        var recipient_buyer_phone = recipient_phone_no_1 + "-" + recipient_phone_no_2+"-"+ recipient_phone_no_3;
 
-        // 구매자 주소
-        var buyer_addr1 = $('#buyer_addr1').val();
-        var buyer_addr2 = $('#buyer_addr2').val();
-        var buyer_addr = buyer_addr1 + " " + buyer_addr2;
-
-        // 구매자 우편번호
-        var buyer_postcode = $('#buyer_postcode').val();
         // 배송메시지
-        var  buyer_message = $('#buyer_message').val();
+        var recipient_message = $('#recipient_message').val();
 
+
+        // 구매 금액
+        var buy_amount = Number($('#box3_purchase_amount_hidden').text());
+        //구매 첫번째 상품
+        var buy_product_first = $('#buy_product_first').text();
+        //구매 상품 수
+        var buy_product_count = $('#buy_product_count').text();
+        //결체창에서의 구매상품명
+        var buy_product_name;
+
+        //입금자명
+        var none_bank_buyer_name = $('#none_bank_buyer_name').val();
+        //입금계좌
+        var none_bank_account = $('#none_bank_account').val();
+
+
+        if(buy_product_count==1){ // 구매하는 상품이 하나일 경우
+
+            buy_product_name = buy_product_first;
+
+        }else{ // 구매하는 상품이 2개 이상일 경우 (
+
+            buy_product_name = buy_product_first.concat(" 외", Number(buy_product_count)-1,"건");
+
+        }
+
+
+        if(order_name==""){
+            alert("주문자 이름을 입력해주세요");
+            return;
+        }else if(order_phone_no_1 == ""){
+            alert("주문자 전화번호를 입력해주세요");
+            return;
+        }else if(order_phone_no_2 == ""){
+            alert("주문자 전화번호를 입력해주세요");
+            return;
+        }else if(order_phone_no_3 == ""){
+            alert("주문자 전화번호를 입력해주세요");
+            return;
+        }else if(order_email == ""){
+            alert("주문자 이메일을 입력해주세요");
+            return;
+        }else if(recipient_name == ""){
+            alert("수령인 이름을 입력해주세요");
+            return;
+        }else if(recipient_postcode == ""){
+            alert("우편번호를 입력해주세요");
+            return;
+        }else if(recipient_addr1 == ""){
+            alert("수령인 주소를 정확히 입력해주세요");
+            return;
+        }else if(recipient_addr2 == ""){
+            alert("수령인 주소를 정확히 입력해주세요");
+            return;
+        }else if(recipient_phone_no_1 == ""){
+            alert("수령인 핸드폰 번호를 정확히 입력해주세요");
+            return;
+        }else if(recipient_phone_no_2 == ""){
+            alert("수령인 핸드폰 번호를 정확히 입력해주세요");
+            return;
+        }else if(recipient_phone_no_3 == ""){
+            alert("수령인 핸드폰 번호를 정확히 입력해주세요");
+            return;
+        }else if(none_bank_buyer_name=="") {
+            alert("입금자명을 입력해주세요");
+            return;
+        }else if(none_bank_account!="fitme_bank") {
+            alert("입금계좌를 선택해주세요");
+            return;
+        }else{
+            alert("성공");
+
+            post_to_url('http://49.247.136.36/main/cart/order_save.php',
+                {'user_id':user_id,
+                    'product_information_group_json':product_information_group_json,
+                    'order_name':order_name,'order_phone':order_phone,'order_email':order_email,'recipient_name':recipient_name,'recipient_addr':recipient_addr,'recipient_tel':recipient_buyer_tel,'recipient_phone':recipient_buyer_phone,'recipient_message':recipient_message,
+                    'payment_method':'nonebank','payment_imp_uid':'','payment_merchant_uid':'', 'payment_amount':buy_amount, 'payment_apply_num':'','nonebank_name':none_bank_buyer_name,'nonebank_bank':none_bank_account,'payment_boolean':'no'}
+            )
+
+        }
+
+
+
+    }
+
+
+    // 가상계좌
+    function requestPay_vbank() {
+
+        //주문한 유저아이디
+        var user_id = $('#user_id').text();
+        //주문한 상품 목록
+        var product_information_group_json = $('#product_information_group_json').text();
+
+        // 주문자 이름
+        var order_name = $('#order_name').val();
+        // 주문자 휴대전화번호
+        var order_phone_no_1 = $('#order_phone_no_1').val();
+        var order_phone_no_2 = $('#order_phone_no_2').val();
+        var order_phone_no_3 = $('#order_phone_no_3').val();
+        var order_phone = order_phone_no_1 + "-" + order_phone_no_2+"-"+ order_phone_no_3;
+        // 주문자 이메일
+        var order_email = $('#order_email').val();
+
+        //수령인 이름
+        var recipient_name = $('#recipient_name').val();
+
+
+        //수령인 주소
+        var recipient_postcode = $('#recipient_postcode').val();
+        var recipient_addr1 = $('#recipient_addr1').val();
+        var recipient_addr2 = $('#recipient_addr2').val();
+        var recipient_addr = recipient_postcode + "/" + recipient_addr1 + "/" + recipient_addr2;
+
+        // 구매자 일반 전화번호
+        var recipient_tel_no_1 = $('#recipient_tel_no_1').val();
+        var recipient_tel_no_2 = $('#recipient_tel_no_2').val();
+        var recipient_tel_no_3 = $('#recipient_tel_no_3').val();
+        var recipient_buyer_tel = recipient_tel_no_1 + "-" + recipient_tel_no_2 +"-"+ recipient_tel_no_3;
+
+
+        // 구매자 핸드폰 전화번호
+        var recipient_phone_no_1 = $('#recipient_phone_no_1').val();
+        var recipient_phone_no_2 = $('#recipient_phone_no_2').val();
+        var recipient_phone_no_3 = $('#recipient_phone_no_3').val();
+        var recipient_buyer_phone = recipient_phone_no_1 + "-" + recipient_phone_no_2+"-"+ recipient_phone_no_3;
+
+        // 배송메시지
+        var recipient_message = $('#recipient_message').val();
+
+
+        // 구매 금액
+        var buy_amount = Number($('#box3_purchase_amount_hidden').text());
         //구매 첫번째 상품
         var buy_product_first = $('#buy_product_first').text();
         //구매 상품 수
@@ -1731,29 +2253,42 @@ $total = mysqli_num_rows($result);
 
         }
 
-        if(buyer_name==""){
-            alert("이름을 입력해주세요");
+
+        if(order_name==""){
+            alert("주문자 이름을 입력해주세요");
             return;
-        }else if(buyer_email == ""){
-            alert("이메일을 입력해주세요");
+        }else if(order_phone_no_1 == ""){
+            alert("주문자 전화번호를 입력해주세요");
             return;
-        }else if(phone_no_1 == ""){
-            alert("핸드폰 번호를 정확히 입력해주세요");
+        }else if(order_phone_no_2 == ""){
+            alert("주문자 전화번호를 입력해주세요");
             return;
-        }else if(phone_no_2 == ""){
-            alert("핸드폰 번호를 정확히 입력해주세요");
+        }else if(order_phone_no_3 == ""){
+            alert("주문자 전화번호를 입력해주세요");
             return;
-        }else if(phone_no_3 == ""){
-            alert("핸드폰 번호를 정확히 입력해주세요");
+        }else if(order_email == ""){
+            alert("주문자 이메일을 입력해주세요");
             return;
-        }else if(buyer_postcode == ""){
-            alert("우편번호를 정확히 입력해주세요");
+        }else if(recipient_name == ""){
+            alert("수령인 이름을 입력해주세요");
             return;
-        }else if(buyer_addr1 == ""){
-            alert("주소를 정확히 입력해주세요");
+        }else if(recipient_postcode == ""){
+            alert("우편번호를 입력해주세요");
             return;
-        }else if(buyer_addr2 == ""){
-            alert("주소를 정확히 입력해주세요");
+        }else if(recipient_addr1 == ""){
+            alert("수령인 주소를 정확히 입력해주세요");
+            return;
+        }else if(recipient_addr2 == ""){
+            alert("수령인 주소를 정확히 입력해주세요");
+            return;
+        }else if(recipient_phone_no_1 == ""){
+            alert("수령인 핸드폰 번호를 정확히 입력해주세요");
+            return;
+        }else if(recipient_phone_no_2 == ""){
+            alert("수령인 핸드폰 번호를 정확히 입력해주세요");
+            return;
+        }else if(recipient_phone_no_3 == ""){
+            alert("수령인 핸드폰 번호를 정확히 입력해주세요");
             return;
         }else if($("#checkbox_vbank").is(":checked") == false) {
             alert("에스크로 구매안전 서비스 적용에 체크해주세요");
@@ -1761,15 +2296,12 @@ $total = mysqli_num_rows($result);
         }else{
             IMP.request_pay({
                 pg: 'html5_inicis',
+                escrow : true,
                 pay_method: 'vbank',
                 merchant_uid: 'merchant_' + new Date().getTime(),
                 name: buy_product_name,
                 amount: buy_amount,
-                buyer_email: buyer_email,
-                buyer_name: buyer_name,
-                buyer_tel: buyer_phone,
-                buyer_addr: buyer_addr,
-                buyer_postcode: buyer_postcode
+                buyer_tel: order_phone
             }, function (rsp) {
                 if (rsp.success) {
                     var msg = '결제가 완료되었습니다.';
@@ -1778,8 +2310,26 @@ $total = mysqli_num_rows($result);
                     msg += '결제 금액 : ' + rsp.paid_amount;
                     msg += '카드 승인번호 : ' + rsp.apply_num;
 
-                    post_to_url('http://49.247.136.36/main/cart/order_finish.php', {'name':'jeyeon','age':'23','tel':buyer_tel, 'message':buyer_message})
+                    alert(msg);
+                    //location.href="http://49.247.136.36/main/cart/order_finish_html.php";
+                    //결제 완료 시 넘길 정보
 
+                    //주문인 아이디
+                    //상품정보 (상품키, 사이즈, 색상, 수량이 담긴 json파일)
+                    //입력정보 (주문자 이름, 주문자 전화번호, 주문자 이메일
+                    //         수령인 이름, 수령인 주소, 수령인 일반번호, 수령인 핸드폰번호, 수령인 배송메시지)
+                    //결제정보 (결제수단, 고유ID, 상점 거래ID , 결제금액, 카드승인번호, 무통장 입금자명, 무통장 입금은행, 결제여부)
+
+
+                    //payment_id (무통장 입금 X - 고유 ID, 무통장입금 O - 입금자명)
+                    //payment_bank (무통장 입금 X - 카드승인번호, 무통장입금 O - 입금은행)
+
+                    post_to_url('http://49.247.136.36/main/cart/order_save.php',
+                        {'user_id':user_id,
+                            'product_information_group_json':product_information_group_json,
+                            'order_name':order_name,'order_phone':order_phone,'order_email':order_email,'recipient_name':recipient_name,'recipient_addr':recipient_addr,'recipient_tel':recipient_buyer_tel,'recipient_phone':recipient_buyer_phone,'recipient_message':recipient_message,
+                            'payment_method':'vbank','payment_imp_uid':rsp.imp_uid,'payment_merchant_uid':rsp.merchant_uid, 'payment_amount':rsp.paid_amount, 'payment_apply_num':rsp.apply_num,'nonebank_name':'','nonebank_bank':'','payment_boolean':'yes'}
+                    )
                 } else {
                     var msg = '결제에 실패하였습니다.';
                     msg += '에러내용 : ' + rsp.error_msg;
@@ -1855,3 +2405,5 @@ $total = mysqli_num_rows($result);
     });
 </script>
 </html>
+
+    <?php  } ?>

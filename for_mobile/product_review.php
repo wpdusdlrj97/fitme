@@ -53,12 +53,12 @@ if($page&&$category)
         }
     }
     mysqli_close($connect);
-    $data['count']=$count;
-    $data['review_email']=$review_email;
-    $data['review_star']=$review_star;
-    $data['review_text']=$review_text;
-    $data['review_date']=$review_date;
-    $data['review_photo']=$review_photo;
+    $data['count']=$count;//리뷰총개수
+    $data['review_email']=$review_email;//리뷰 소유주 이메일
+    $data['review_star']=$review_star;//평점
+    $data['review_text']=$review_text;//리뷰글
+    $data['review_date']=$review_date;//리뷰 작성일
+    $data['review_photo']=$review_photo;//포토리뷰 사진 경로
     echo json_encode($data,JSON_UNESCAPED_UNICODE);
 }
 ?>
