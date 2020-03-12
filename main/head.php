@@ -24,9 +24,7 @@ mysqli_close($connect);
     <title>FitMe</title>
     <style>
         html.open { overflow: hidden; }
-        body{ padding:0; margin:0; font-family: 'Noto Sans KR', sans-serif;
-            /*opacity:0; */
-        }
+        #head_body_for_drag{ padding:0; font-family: 'Noto Sans KR', sans-serif; -ms-user-select: none; -moz-user-select: -moz-none; -webkit-user-select: none; -khtml-user-select: none; user-select:none; }
         #head_logo_place{ margin:0 auto; font-family: 'Lato', sans-serif; width:1300px; -ms-user-select: none; -moz-user-select: -moz-none; -webkit-user-select: none; -khtml-user-select: none; user-select:none; }
         .head_logo_left, .head_logo_right{ float:left; width:35%; height:107px; margin:0; padding:0; }
         .head_logo_center{ float:left; width:30%; height:107px; margin:0; padding:0; }
@@ -40,13 +38,13 @@ mysqli_close($connect);
         .head_slash{ float:right; font-size:11px; color:lightgrey; margin:0 10px 0 10px; line-height:50px; }
         .head_contact a, .head_login a, .head_logout a, .head_mypage a{ text-decoration:none; color:black; cursor:pointer; }
         .head_contact a:hover, .head_login a:hover, .head_logout a:hover, .head_mypage a:hover{ color:#585858; text-decoration:none; }
-        #head_category_place{ width:100%; float:left; height:56px; border-top:1px lightgrey solid; border-bottom:1px lightgrey solid; position:fixed; top:107px; background:#FFFFFF; z-index:100; }
+        #head_category_place{ width:100%; float:left; box-shadow:0 0px 2px 1px #E6E6E6; height:56px; position:fixed; top:107px; background:#FFFFFF; z-index:100; }
         .head_category{ width:1300px; margin:0 auto; }
-        .head_category_left, .head_category_right{ float:left; width:18%; height:56px; margin:0; padding:0; }
-        .head_category_center{ float:left; width:64%; height:56px; margin:0; padding:0; }
-        .head_categories{ font-weight:400; height:56px; font-size:15px; text-align:center; float:left; line-height:55px; color:black; letter-spacing: 1.15px; }
-        .head_categories:hover{ transition:all 150ms linear; color:lightgrey; cursor:pointer; }
-        .search_box{ float:right; width:180px; border:1px lightgrey solid; height:32px; margin-top:12px; border-radius: 5px; }
+        .head_category_left, .head_category_right{ float:left; width:15%; height:56px; margin:0; padding:0; }
+        .head_category_center{ float:left; width:70%; height:56px; margin:0; padding:0; }
+        .head_categories{ width:calc(100% / 5); font-weight:600; height:56px; font-size:14px; text-align:center; float:left; line-height:55px; color:black; }
+        .head_categories:hover{ transition:all 150ms linear; color:#9370db; cursor:pointer; font-weight:bold; }
+        .search_box{ float:right; width:180px; border:1px lightgrey solid; height:32px; margin-top:12px; border-radius: 5px; background:white; }
         .search_box img{ width:20px; height:20px; margin-top:6px; margin-right:8px; float:right; cursor:pointer; opacity:0.8 }
         .search_box img:hover{ transition:all 10ms linear; opacity: 0.6; }
         .search_box input{ width:130px; float:left; margin-left:10px; border:none; height:22px; margin-top:5px; }
@@ -62,22 +60,42 @@ mysqli_close($connect);
         .head_hidden_990_center{ float:left; width:60%; margin-left:6%; height:54px; text-align: center; }
         .head_hidden_990_center td { height:100%; }
         #head_hidden_990{ display:none; height:54px; background:#F2F6F6; width:100%; position:fixed; z-index:100; }
-        .head_menu_close { opacity:0.6; width: 50px; height: 50px; position: absolute; right: -50px; top: 0; background-image: url("/web/icon/menu_close.png"); background-size: 50%; background-repeat: no-repeat; background-position: center; cursor: pointer; }
+        .head_menu_close { opacity:0.6; width: 50px; height: 50px; position: absolute; right: 0; top: 0; background-image: url("/web/icon/menu_close.png"); background-size: 50%; background-repeat: no-repeat; background-position: center; cursor: pointer; }
         .head_menu_close:hover { opacity:0.4; transition:all 200ms linear; }
-        #head_menu { width: 350px; height: 100%; position: fixed; top: 0; left: -402px; z-index: 200; background-color: #F2F6F6; transition: All 0.4s ease; -webkit-transition: All 0.4s ease; -moz-transition: All 0.4s ease; -o-transition: All 0.4s ease; }
+        #head_menu { width:calc(60% - 60px); font-family: 'Oswald', sans-serif; box-shadow:0 5px 5px 3px #424242; height: calc(100% - 60px); padding:30px; position: fixed; top: 0; left: -65%; z-index: 200; background:white; transition: All 0.4s ease; -webkit-transition: All 0.4s ease; -moz-transition: All 0.4s ease; -o-transition: All 0.4s ease; }
         #head_menu.open { left: 0px; }
         .head_page_cover.open { display: block; }
         .head_page_cover { width: 100%; height: 100%; float:left; position: fixed; top: 0px; left: 0px; background-color: rgba(0, 0, 0, 0.5); z-index: 195; display: none; }
         .head_category_990_hidden_tr{ display:none; clear:left; font-size:13px; color:#848484; margin:0; width:100%; padding:0; list-style-type:none; border-bottom:1px #E6E6E6 solid; float:left; text-align:center; }
         .head_category_hidden_td1{ float:left; height:35px; line-height:38px; width:33%; border-right:1px #E6E6E6 solid; cursor:pointer; }
         .head_category_hidden_td2{ float:left; height:35px; line-height:38px; width:33%; cursor:pointer; }
-        .head_category_hidden_td1:hover, .head_category_hidden_td2:hover{ transition:all 200ms linear; color:#2E2E2E; font-weight:bold; }
+        .head_category_hidden_td1:hover, .head_category_hidden_td2:hover{ transition:all 200ms linear; color:#9370db; font-weight:bold; }
         .head_fixed_margin{ float:left; width:100%; margin-bottom:56px;}
+        .go_predressing{ transition:all 200ms linear; position:fixed; right:30px; bottom:30px; width:70px; height:70px; padding:10px; z-index:100; cursor:pointer; border-radius:100%; background-origin:content-box; background-repeat:no-repeat; background-image:url("/web/icon/go_predressing2.png"); background-size:100% 100%; }
+        .go_predressing:hover{ transition:all 200ms linear; background-image:url("/web/icon/go_predressing1.png"); opacity:0.7;  }
+        .head_category_menu{ float:left; width:25px; height:16px; padding:20px; cursor:pointer; opacity:0.7; }
+        .head_category_menu:hover{ opacity:1; }
+        .head_open_menu_box{ float:left; box-shadow:1px 1px 3px 1px #E6E6E6; font-family: 'Noto Sans KR', sans-serif; font-size:13px; position:relative; width:calc( 100% - 20px ); padding:10px; margin-top:1px; background-color:rgba(255,255,255,0.95); text-align:center; display:none; opacity:0; }
+        .head_open_menu_inbox1{ float:left; width:calc(15% - 20px); margin:10px 0 0 5%; }
+        .head_open_menu_p_text{ float:left; text-align:left; width:100%; font-size:16px; cursor:pointer; }
+        .head_open_menu_p_text:hover{ color:#9370db; }
+        .head_open_menu_inbox2{ float:left; width:calc(55% - 20px); margin:10px; }
+        .head_open_menu_item_text_line{ float:left; width:100%; height:20px; }
+        .head_open_menu_item_box{ float:left; text-align:center; width:24%; margin-left:1%; }
+        .head_open_menu_item_text_b_line{ float:left; transition:all 200ms linear; font-size:13px; text-align:left; width:100%; margin-bottom:10px; text-decoration: underline; cursor:pointer; }
+        .head_open_menu_item_text_box{ float:left; text-align:left; width:97%; margin-left:3%; padding:2px 0 2px 0; margin-bottom:5px; }
+        .head_open_menu_item_text{ transition:all 200ms linear; float:left; font-size:11px; height:20px; cursor:pointer; }
+        .head_open_menu_item_text:hover{ transition:all 200ms linear; font-size:13px; }
+        .head_open_menu_inbox3, .head_open_menu_inbox4{ float:left; width:calc(12.5% - 20px); text-align:left; font-size:12px; margin:55px 10px 10px 10px; color:#848484 }
+        .head_open_menu_contents_text{ float:left; width:100%; margin-bottom:10px; height:20px; cursor:pointer; }
+        .head_open_menu_contents_text:hover{ color:black; }
+        .last_hidden_tr{ border-bottom:none; }
         @media (max-width:1320px){
             #head_logo_place{ width:100%; }
             .head_category{ width:100%; }
             .head_logo_hidden_990{ display:none; }
             .head_contents{ display:block; }
+            .go_predressing{ display:none; }
         }
         @media (max-width:990px)
         {
@@ -86,14 +104,8 @@ mysqli_close($connect);
             .head_logo_hidden_990{ display:block; }
             .head_contents{ display:none; }
             .head_category_990_hidden_tr { display:block; }
-        }
-        @media( max-width:989px)
-        {
-            #head_category_place{ top:161px; height:110px; }
-        }
-        @media (max-width:991px)
-        {
-            .head_fixed_margin{ margin-bottom:110px; }
+            #head_category_place{ top:161px; height:auto; }
+            .head_fixed_margin{ margin-bottom:74px; }
         }
         @media (max-width:500px)
         {
@@ -102,10 +114,38 @@ mysqli_close($connect);
         }
     </style>
 </head>
-<body>
+<body id="head_body_for_drag">
+    <div class="go_predressing"></div>
     <div onclick="history.back();" class="head_page_cover"></div>
     <div id="head_menu">
         <div onclick="history.back();" class="head_menu_close"></div>
+        <?php if($_SESSION['id']){?>
+            <div class="head_menu_login_text" style="font-size:13px; width:100%; float:left; text-align:center; margin-bottom:20px;"><?php echo $_SESSION['id']?> 님 즐쇼하쇼</div>
+            <div class="head_menu_logout_box" style="float:left; width:100%; height:40px; margin-bottom:30px; text-align:center;">
+                <div class="head_menu_logout_button" style="width:30%; height:30px; border-radius:3px; border:1px black solid; line-height:30px; font-size:12px; margin-right:20px; cursor:pointer; display:inline-block; vertical-align:middle; ">MYPAGE</div>
+                <div class="head_menu_logout_button" style="width:30%; height:30px; border-radius:3px; border:1px black solid; line-height:30px; font-size:12px; cursor:pointer; display:inline-block; vertical-align:middle; ">LOGOUT</div>
+            </div>
+        <?php }?>
+        <div class="head_menu_main_category" style="float:left; width:100%; font-size:18px; text-align:left; margin-bottom:15px; ">⦁ HOME</div>
+        <div class="head_menu_main_category" style="float:left; width:100%; font-size:18px; text-align:left; margin-bottom:15px; ">⦁ NEW</div>
+        <div class="head_menu_main_category" style="float:left; width:100%; font-size:18px; text-align:left; margin-bottom:15px; ">⦁ BEST</div>
+        <div class="head_menu_main_category" style="float:left; width:100%; font-size:18px; text-align:left; margin-bottom:15px; ">⦁ ITEM</div>
+        <?php for($category_count=0;$category_count<count($category1);$category_count++){
+            if($category_count%2==0&&$category_count!=0){?>
+                <div class="head_open_menu_item_text_line"></div>
+            <?php }
+            ?>
+            <div class="head_menu_main_category_item_box" style="float:left; width:44%; margin-left:6%;">
+                <div class="head_menu_main_category_item_category" style="float:left; font-size:15px; text-decoration: underline; margin-bottom:8px;" onclick="location.href='http://49.247.136.36/main/category.php?category1=<?php echo $category1[$category_count]?>'"><?php echo $category1[$category_count]?></div>
+                <?php for($category2_count=0;$category2_count<count(json_decode($category2[$category_count],true));$category2_count++){?>
+                    <div class="head_menu_main_category_item_detail_box" style="float:left; width:94%; margin-left:6%; margin-bottom:8px;">
+                        <div class="head_menu_main_category_item_detail" style="float:left; font-size:13px;" onclick="location.href='http://49.247.136.36/main/category.php?category1=<?php echo $category1[$category_count]?>&category2=<?php echo json_decode($category2[$category_count],true)[$category2_count]?>'"><?php echo json_decode($category2[$category_count],true)[$category2_count]?></div>
+                    </div>
+                <?php }?>
+            </div>
+        <?php }?>
+        <div class="head_menu_main_category" style="float:left; width:100%; font-size:18px; text-align:left; margin-bottom:15px; margin-top:5px; ">⦁ STORE</div>
+        <div class=""sfdddddddddddddddddddddddddddddddddddddddd
     </div>
     <div id="head_hidden_990">
         <div class="head_hidden_990_left">
@@ -113,12 +153,10 @@ mysqli_close($connect);
         </div>
         <table class="head_hidden_990_center">
             <td class="head_table1"><a href="http://49.247.136.36/main/seller/inquire.php">입점문의</a></td>
-            <?php if($_SESSION['email']){ ?>
+            <?php if($_SESSION['id']){ ?>
                 <td class="head_table2"><a href="http://49.247.136.36/fitme_logout.php">Logout</a></td>
                 <td class="head_table3"><a href="http://49.247.136.36/main/mypage/main_html.php">Mypage</a></td>
-            <?php }else{ ?>
-
-            <?php
+            <?php }else{
                 //로그인 state 값 설정
                 $state = 'xyz';
                 // 세션 또는 별도의 저장 공간에 상태 토큰을 저장
@@ -156,13 +194,15 @@ mysqli_close($connect);
     </div>
     <div id="head_category_place">
         <div class="head_category">
-            <div class="head_category_left"></div>
+            <div class="head_category_left">
+                <img class="head_category_menu" src="/web/icon/black_menu.png">
+            </div>
             <div class="head_category_center">
-                <div class="head_categories" style="width:<?php echo 100/(count($category1)+2)?>%;" onclick="location.href='http://49.247.136.36/main/category.php?category1=NEW'">NEW</div>
-                <div class="head_categories" style="width:<?php echo 100/(count($category1)+2)?>%;" onclick="location.href='http://49.247.136.36/main/category.php?category1=BEST'">BEST</div>
-                <?php for($category_count=0;$category_count<count($category1);$category_count++){?>
-                    <div class="head_categories" style="width:<?php echo 100/(count($category1)+2)?>%;" onclick="location.href='http://49.247.136.36/main/category.php?category1=<?php echo $category1[$category_count]?>'"><?php echo $category1[$category_count]?></div>
-                <?php }?>
+                <div class="head_categories" onclick="location.href='http://49.247.136.36/main/category.php?category1=NEW'">NEW</div>
+                <div class="head_categories" onclick="location.href='http://49.247.136.36/main/category.php?category1=BEST'">BEST</div>
+                <div class="head_categories" onclick="location.href='http://49.247.136.36/main/category.php?category1=ITEM'">ITEM</div>
+                <div class="head_categories" onclick="location.href='http://49.247.136.36/main/store_main.php'">STORE</div>
+                <div class="head_categories" onclick="location.href='http://49.247.136.36/main/predressing.php'">FITME</div>
             </div>
             <div class="head_category_right">
                 <div class="search_box">
@@ -170,37 +210,88 @@ mysqli_close($connect);
                     <input class="search_text" type="text" placeholder="Search">
                 </div>
             </div>
+            <div class="head_open_menu_box">
+                <div class="head_open_menu_inbox1">
+                    <div class="head_open_menu_p_text" style="margin-bottom:40px;" onclick="location.href='http://49.247.136.36/main/category.php?category1=NEW'">⦁ NEW</div>
+                    <div class="head_open_menu_p_text" style="margin-bottom:40px;" onclick="location.href='http://49.247.136.36/main/category.php?category1=BEST'">⦁ BEST</div>
+                    <div class="head_open_menu_p_text" style="margin-bottom:40px;" onclick="location.href='http://49.247.136.36/main/store_main.php'">⦁ STORE</div>
+                    <div class="head_open_menu_p_text" style="margin-bottom:40px;" onclick="location.href='http://49.247.136.36/main/predressing.php'">⦁ FITME</div>
+                </div>
+                <div class="head_open_menu_inbox2">
+                    <div class="head_open_menu_p_text" style="margin-bottom:20px;" onclick="location.href='http://49.247.136.36/main/category.php?category1=ITEM'">⦁ ITEM</div>
+                    <?php for($category_count=0;$category_count<count($category1);$category_count++){
+                        if($category_count%4==0&&$category_count!=0){?>
+                            <div class="head_open_menu_item_text_line"></div>
+                        <?php }
+                        ?>
+                        <div class="head_open_menu_item_box">
+                            <div class="head_open_menu_item_text_b_line" onclick="location.href='http://49.247.136.36/main/category.php?category1=<?php echo $category1[$category_count]?>'"><?php echo $category1[$category_count]?></div>
+                            <?php for($category2_count=0;$category2_count<count(json_decode($category2[$category_count],true));$category2_count++){?>
+                                <div class="head_open_menu_item_text_box">
+                                    <div class="head_open_menu_item_text" onclick="location.href='http://49.247.136.36/main/category.php?category1=<?php echo $category1[$category_count]?>&category2=<?php echo json_decode($category2[$category_count],true)[$category2_count]?>'"><?php echo json_decode($category2[$category_count],true)[$category2_count]?></div>
+                                </div>
+                            <?php }?>
+                        </div>
+                    <?php }?>
+                </div>
+                <div class="head_open_menu_inbox3">
+                    <div class="head_open_menu_contents_text" onclick="location.href='http://49.247.136.36/main/mypage/main_html.php'">마이페이지</div>
+                    <div class="head_open_menu_contents_text">공지사항</div>
+                    <div class="head_open_menu_contents_text">고객센터</div>
+                    <div class="head_open_menu_contents_text">이벤트</div>
+                    <div class="head_open_menu_contents_text">즐겨찾기</div>
+                    <div class="head_open_menu_contents_text">찜한상품</div>
+                    <div class="head_open_menu_contents_text">모바일</div>
+                </div>
+                <div class="head_open_menu_inbox4">
+                    <div class="head_open_menu_contents_text">회사소개</div>
+                    <div class="head_open_menu_contents_text">입점문의</div>
+                    <div class="head_open_menu_contents_text">쇼핑몰신고</div>
+                    <div class="head_open_menu_contents_text">입점안하면크롤링</div>
+                </div>
+            </div>
         </div>
         <ul class="head_category_990_hidden_tr">
-            <li class="head_category_hidden_td1" onclick="page_move('http://49.247.136.36/main/category.php?category1=NEW')">NEW</li>
-            <li class="head_category_hidden_td1" onclick="page_move('http://49.247.136.36/main/category.php?category1=BEST')">BEST</li>
-            <li class="head_category_hidden_td2">Search</li>
+            <li class="head_category_hidden_td1" onclick="page_move('http://49.247.136.36/main/main.php')">홈</li>
+            <li class="head_category_hidden_td1" onclick="page_move('http://49.247.136.36/main/category.php?category1=NEW')">신상품</li>
+            <li class="head_category_hidden_td2" onclick="page_move('http://49.247.136.36/main/category.php?category1=BEST')">인기상품</li>
         </ul>
-        <?php
-        $temp_count=0;
-        for($category_count=0;$category_count<count($category1);$category_count++){ if($temp_count==0){
-            $result_count = 3-(count($category1)%3);
-            ?>
-            <ul class="head_category_990_hidden_tr">
-        <?php }
-            if($temp_count==0||$temp_count==1)
-            {?>
-                <li class="head_category_hidden_td1" onclick="location.href='http://49.247.136.36/main/category.php?category1=<?php echo $category1[$category_count]?>'"><?php echo $category1[$category_count]?></li>
-            <?php }
-            else
-            {?>
-                <li class="head_category_hidden_td2" onclick="location.href='http://49.247.136.36/main/category.php?category1=<?php echo $category1[$category_count]?>'"><?php echo $category1[$category_count]?></li>
-            <?php }
-            ?>
-            <?php if($temp_count==2||(($temp_count!=2)&&$category_count+1==count($category1))){ $temp_count=0; ?>
-                </ul>
-            <?php } else { $temp_count++; }}
-        ?>
+        <ul class="head_category_990_hidden_tr last_hidden_tr">
+            <li class="head_category_hidden_td1" onclick="page_move('http://49.247.136.36/main/category.php?category1=ITEM')">아이템</li>
+            <li class="head_category_hidden_td1" onclick="page_move('http://49.247.136.36/main/store_main.php')">쇼핑몰</li>
+            <li class="head_category_hidden_td2" onclick="page_move('http://49.247.136.36/main/search.php?search=검색')">검색</li>
+        </ul>
     </div>
     <div class="head_fixed_margin"></div>
 </body>
 <script>
+    var open_menu_running=false;
 
+    $('.head_category_menu').click(function(){
+        if(!open_menu_running){
+            open_menu_running=true;
+            if($('.head_open_menu_box').css("display")=='block'){
+                $('.head_open_menu_box').fadeOut(200);
+                $('.head_open_menu_box').fadeTo("fast",0);
+                setTimeout(function() {
+                    $('.head_open_menu_box').css("display","none");
+                    open_menu_running = false;
+                }, 300);
+            }else{
+                $('.head_open_menu_box').css("display","block");
+                $('.head_open_menu_box').fadeIn(100);
+                $('.head_open_menu_box').fadeTo("fast",1);
+                setTimeout(function() {
+                    open_menu_running = false;
+                }, 200);
+
+            }
+        }
+    });
+
+    $('.go_predressing').click(function(){
+        location.href="http://49.247.136.36/main/predressing.php";
+    });
     // window.onload = function(){
     //     //화면의 높이와 너비를 구한다.
     //     setTimeout(function() {

@@ -985,6 +985,31 @@ while($row = mysqli_fetch_array($qry))
                                 location.href="http://49.247.136.36/main/main.php";
                         });
                         }
+                        for(var i=0;i<100;i++){
+                            $.ajax({
+                                type:"POST",
+                                url:"./product_upload_server.php",
+                                data : {name:$('.product_upload_top_product_name').val(),ex:$('.product_upload_top_product_guid').val(),category1:$('.proudct_upload_top_product_category1').val()
+                                    ,category2:$('.proudct_upload_top_product_category2').val(),size:$('#input_product_size').val(),content:editor.getContent(),price:$('.product_upload_top_product_price').val(),
+                                    number:'submit',key:string,stock:$('.product_upload_top_product_stock').val(),color:color_send_data},
+                                dataType : "text",
+                                success: function(string){
+                                    $('.loader-default').remove();
+                                    swal({
+                                        title: "제품 등록",
+                                        text: "제품을 정상적으로 등록했습니다.",
+                                        icon: "warning",
+                                        buttons: ["네"],
+                                        dangerMode: true
+                                    }).then((willDelete) => {
+                                        location.href="http://49.247.136.36/shop/product_upload.php";
+                                });
+                                },
+                                error: function(xhr, status, error) {
+                                    alert(error);
+                                }
+                            });
+                        }
                         $.ajax({
                             type:"POST",
                             url:"./product_upload_server.php",

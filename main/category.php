@@ -24,10 +24,12 @@ if($category_1)
 {
     if($category_2)
     {
-        $qry = mysqli_query($connect,"select product_key, email, name, price, main_image, color from product where category1='$category_1' and category2='$category_2' order by date desc");
+        $qry = mysqli_query($connect,"select product_key, email, name, price, main_image, color from product where category1='$category_1' and category2='$category_2' order by date desc limit 0,20");
+        $qry2 = mysqli_query($connect,"select product_key, email, name, price, main_image, color from product where category1='$category_1' and category2='$category_2' order by date desc");
     }else
     {
-        $qry = mysqli_query($connect,"select product_key, email, name, price, main_image, color from product where category1='$category_1' order by date desc");
+        $qry = mysqli_query($connect,"select product_key, email, name, price, main_image, color from product where category1='$category_1' order by date desc limit 0,20");
+        $qry2 = mysqli_query($connect,"select product_key, email, name, price, main_image, color from product where category1='$category_1' order by date desc");
     }
 }else
 {
@@ -36,6 +38,7 @@ if($category_1)
 
 //추후에 이 이메일을 기준으로 쇼핑몰 이름을 찾아야 한다.
 //페이징 처리
+$all_product_count = mysqli_num_rows($qry2);
 $product_key_array = array();
 $shop_name = array();
 $name = array();
@@ -92,11 +95,11 @@ $_SESSION['URL'] = 'http://49.247.136.36/main/category.php?category1='.$category
         #contents_box{  margin:0 auto; width:1300px; }
         .center_contents_box{ width:100%; float:left; font-family: 'Oswald', sans-serif; letter-spacing: 1.15px; color:#585858; }
         .category1_name{ margin-top:50px; font-size:22px; text-align:left; float:left; cursor:pointer; padding-left:15px; }
-        .category2_box{ float:left; font-size:13px; width:100%; overflow:hidden }
-        .category2_name{ float:left; cursor:pointer; padding:15px 30px 15px 15px; background:#F2F2F2; overflow:hidden; }
+        .category2_box{ float:left; font-size:13px; width:100%; overflow:hidden; border-bottom:1px #E6E6E6 solid; }
+        .category2_name{ float:left; cursor:pointer; padding:15px 30px 15px 30px; overflow:hidden; text-align:center; }
         .category1_name:hover, .category2_name:hover{ transition:all 200ms linear; font-weight:bold; }
-        .category2_990fix_hidden_table{ width:80%; display:none; float:left; margin-left:10%; }
-        .category2_990fix_hidden_td{ height:50px; line-height:50px; cursor:pointer; background:#F2F2F2; text-align: center; font-size:14px; overflow:hidden; }
+        .category2_990fix_hidden_table{ width:90%; display:none; float:left; border-bottom:1px #E6E6E6 solid; margin-left:5%; }
+        .category2_990fix_hidden_td{ height:50px; line-height:50px; cursor:pointer; text-align: center; font-size:14px; overflow:hidden; }
         .category2_990fix_hidden_td:hover{ transition:all 200ms linear; font-weight:bold; }
         .category_none_place{ width:100%; float:left; margin-top:15px; margin-bottom:15px; }
         .category_count_sort_box{ float:left; width:100%; margin-top:30px; margin-bottom:20px; }
@@ -107,7 +110,7 @@ $_SESSION['URL'] = 'http://49.247.136.36/main/category.php?category1='.$category
         #checkbox_myfit{ float:left; margin-top:16px; width:18px; height:18px; margin-right:5px; }
         .products_sort1:hover, .products_sort2:hover{ transition:all 200ms linear; font-weight:bold; }
         .nope_product{ width:100%; height:100%; line-height:360px; font-size:16px; text-align:center; }
-        .category_contents_product_box{ width:1270px; padding-left:15px; float:left; margin-top:30px; }
+        .category_contents_product_box,{ width:1270px; padding-left:15px; float:left; margin-top:30px; }
         .category_contents_product{ padding:10px; float:left; width:240px; margin-bottom:30px; font-family: 'Noto Sans KR', sans-serif; }
         .category_shop_and_color{ width:100%; float:left; margin-top:2px; margin-bottom:2px; margin-left:5px; }
         .category_shop_name{ font-size:12px; float:left; width:100%; margin-bottom:2px; cursor:pointer; font-weight:lighter; color:#424242; margin-left:5px; }
@@ -119,10 +122,13 @@ $_SESSION['URL'] = 'http://49.247.136.36/main/category.php?category1='.$category
         .category_product_price{ float:left; font-size:12px; font-weight:lighter; margin-left:5px; color:#424242; }
         .category_shop_name:hover, .category_product_name:hover{ transition:all 200ms linear; color:#A4A4A4; }
         .category_product_image_box:hover{ transition:all 200ms linear; opacity:0.5; }
+        .next_pave_button_box{ display:none; float:left; width:100%; text-align:center; margin-top:20px; font-family: 'Noto Sans KR', sans-serif; }
+        .next_page_button{ transition:all 200ms linear; cursor:pointer; font-size:16px; color:#424242; width:400px; height:50px; border-radius:3px; border:1px #D8D8D8 solid; line-height:49px; display:inline-block; vertical-align:middle; }
+        .next_page_button:hover{ color:black; font-weight:bold; transition:all 200ms linear; border:1px #A4A4A4 solid;  }
         @media (max-width:1320px)
         {
             #contents_box{ width:100%; }
-            .category_contents_product_box{ width:100%; }
+            .category_contents_product_box,{ width:100%; }
             .category_shop_name{ font-size:0.9vw; }
             .category_product_name{ font-size:0.9vw; }
             .category_color_box{ height:0.9vw; }
@@ -154,6 +160,7 @@ $_SESSION['URL'] = 'http://49.247.136.36/main/category.php?category1='.$category
             .products_sort2{ margin-right:7px; }
             .products_sort1, .products_sort2{ font-size:12px; }
             .products_count{ width:90%; text-align:center; }
+            .next_page_button{ width:80%; }
         }
     </style>
 </head>
@@ -168,21 +175,20 @@ $_SESSION['URL'] = 'http://49.247.136.36/main/category.php?category1='.$category
         <div class="category_none_place"></div>
         <div class="category2_990fix_hidden_table">
             <?php for($category_count=0;$category_count<count($category2);$category_count++){ if($category_count==0&&($category_1!='NEW'||$category_1!='BEST')){?>
-                <div class="category2_990fix_hidden_td" style="width:<?php echo (100/(count($category2)+1));?>%; float:left; <?php if($category_2){  }else{?> font-weight:bold; <?php }?>" onclick="change_page()">ALL</div>
+                <div class="category2_990fix_hidden_td" style="width:<?php echo (100/(count($category2)+1));?>%; float:left; <?php if($category_2){  }else{?> font-weight:bold; border-bottom:2px #6E6E6E solid; <?php }?>" onclick="change_page()">ALL</div>
             <?php }?>
-                <div class="category2_990fix_hidden_td" style="width:<?php echo (100/(count($category2)+1));?>%; float:left; <?php if($category_2==$category2[$category_count]){?> font-weight:bold; <?php }?>" onclick="change_page('<?php echo $category2[$category_count]?>')"><?php echo $category2[$category_count]?></div>
+                <div class="category2_990fix_hidden_td" style="width:<?php echo (100/(count($category2)+1));?>%; float:left; <?php if($category_2==$category2[$category_count]){?> font-weight:bold; border-bottom:2px #6E6E6E solid; <?php }?>" onclick="change_page('<?php echo $category2[$category_count]?>')"><?php echo $category2[$category_count]?></div>
             <?php }?>
         </div>
         <div class="category2_box">
-
             <?php for($category_count=0;$category_count<count($category2);$category_count++){ if($category_count==0&&($category_1!='NEW'||$category_1!='BEST')){?>
-                <div class="category2_name" style="<?php if($category_2){  }else{?> font-weight:bold; <?php }?>" onclick="change_page()">ALL</div>
+                <div class="category2_name" style="<?php if($category_2){  }else{?> font-weight:bold; border-bottom:2px #6E6E6E solid; <?php }?>" onclick="change_page()">ALL</div>
             <?php }?>
-                <div class="category2_name" style="<?php if($category_2==$category2[$category_count]){?> font-weight:bold; <?php }?>" onclick="change_page('<?php echo $category2[$category_count]?>')"><?php echo $category2[$category_count]?></div>
+                <div class="category2_name" style="<?php if($category_2==$category2[$category_count]){?> font-weight:bold; border-bottom:2px #6E6E6E solid; <?php }?>" onclick="change_page('<?php echo $category2[$category_count]?>')"><?php echo $category2[$category_count]?></div>
             <?php }?>
         </div>
         <div class="category_count_sort_box">
-            <div class="products_count"><?php echo count($product_key_array);?> products</div>
+            <div class="products_count"><?php echo $all_product_count;?> products</div>
             <div class="products_sort1" onclick="change_sort(this)">낮은가격순</div>
             <div class="products_sort2" onclick="change_sort(this)">리뷰많은순</div>
             <div class="products_sort2" onclick="change_sort(this)">인기순</div>
@@ -209,11 +215,14 @@ $_SESSION['URL'] = 'http://49.247.136.36/main/category.php?category1='.$category
                                 <?php }?>
                             </div>
                         </div>
-                        <div class="category_shop_name"><?php echo $shop_name[$product_count]?></div>
+                        <div class="category_shop_name" onclick="location.href='/main/shop/shop_store.php?shop_id=<?php echo $shop_names?>'"><?php echo $shop_name[$product_count]?></div>
                         <div class="category_product_name" onclick="location.href='/main/product.php?product=<?php echo $product_key_array[$product_count]?>'"><?php echo $name[$product_count]?></div>
                         <div class="category_product_price"><?php echo $price[$product_count]?> Won</div>
                     </div>
                 <?php } ?>
+            </div>
+            <div class="next_pave_button_box">
+                <div class="next_page_button">더보기</div>
             </div>
         </div>
     </div>
@@ -228,6 +237,80 @@ $_SESSION['URL'] = 'http://49.247.136.36/main/category.php?category1='.$category
     var sort='최신순';//정렬기준 default 값
     var category1='<?php echo $category_1?>';
     var category2='<?php echo $category_2?>';
+    var page=0;//상품 페이징 number
+    var all_product_count=<?php echo $all_product_count?>;
+
+    //상품 더보기를 보여줄지 말지 처리할 함수
+    if(all_product_count>20){
+        $('.next_pave_button_box').css("display","block");
+    }
+    //상품 더보기 클릭시 이벤트
+    $('.next_page_button').click(function(){
+        page++;
+        $.ajax({
+            type:"GET",
+            url:"/for_mobile/product_option.php",
+            data : {'option':sort,'category1':category1,'category2':category2,'page':page},
+            dataType : "text",
+            success: function(string){
+                //반환된 문자열은 json형태의 데이터가 들어있음 -> 쪼개서 나온 개수만큼 노드 생성
+                if(string!='failed')
+                {
+                    var result_data = JSON.parse(string);
+                    all_product_count = result_data['all_product_count'];
+                    for(var result_count=0;result_count<result_data['product_key'].length;result_count++)
+                    {
+                        var append_data = "<div class='category_contents_product'>";
+                        append_data+="<div class='category_product_image_box'><img class='category_product_image' onclick=\"location.href='/main/product.php?product="+result_data['product_key'][result_count]+"'\" src='"+result_data['product_image'][result_count]+"'></div>";
+                        append_data+="<div class='category_shop_and_color'>";
+                        append_data+="<div class='category_color_box'>";
+                        for(var color_count=0;color_count<result_data['product_color'][result_count].length;color_count++)
+                        {
+                            append_data+="<div class='category_color_contents' style='background:"+result_data['product_color'][result_count][color_count]+"'></div>";
+                        }
+                        append_data+="</div></div><div class='category_shop_name'>"+result_data['product_shop'][result_count]+"</div>";
+                        append_data+="<div class='category_product_name' onclick=\"location.href='/main/product.php?product="+result_data['product_key'][result_count]+"'\">"+result_data['product_name'][result_count]+"</div>";
+                        append_data+="<div class='category_product_price'>"+result_data['product_price'][result_count]+" Won</div></div>";
+                        $('.category_contents_product_box').append(append_data);
+                    }
+                    if($(window).width()<1280)
+                    {
+                        $('.category_contents_product_box').css("width",($(window).width()-17));
+                        if($(window).width()<=973)
+                        {
+                            if($(window).width()<=503)
+                            {
+                                $('.category_contents_product').css("width",($('.category_contents_product_box').width()/2-25));
+                            }
+                            else
+                            {
+                                $('.category_contents_product').css("width",($('.category_contents_product_box').width()/3-25));
+                            }
+                        }
+                        else
+                        {
+                            $('.category_contents_product').css("width",($('.category_contents_product_box').width()/5-25));
+                        }
+                        $('.category_product_image_box').css("height",($('.category_contents_product').width()/4*5));
+                    }
+                    else if($(window).width()>=1280)
+                    {
+                        $('.category_contents_product_box').css("width","1270px");
+                        $('.category_contents_product').css("width",($('.category_contents_product_box').width()/5-25));
+                        $('.category_product_image_box').css("height",($('.category_contents_product').width()/4*5));
+                    }
+                    if(all_product_count>$('.category_contents_product').length){
+                        $('.next_pave_button_box').css("display","block");
+                    }else{
+                        $('.next_pave_button_box').css("display","none");
+                    }
+                }
+            },
+            error: function(xhr, status, error) {
+                alert(error);
+            }
+        });
+    });
 
     function change_page(string)
     {
@@ -305,76 +388,70 @@ $_SESSION['URL'] = 'http://49.247.136.36/main/category.php?category1='.$category
         if(sort!=$(object).text())
         {
             // 다른 정렬기준을 클릭했을 때
+            page = 0;
             $('.products_sort1').css("font-weight","normal");
             $('.products_sort2').css("font-weight","normal");
             $(object).css({"transition":"all 200ms linear","font-weight":"bold"});
             sort = $(object).text();
-            $('.category_contents_product_box').fadeOut(300);
-            $('.category_contents_product_box').fadeTo("slow",0);
-            setTimeout(function() {
-                $('.category_contents_product').remove();
-                $.ajax({
-                    type:"GET",
-                    url:"/for_mobile/product_option.php",
-                    data : {'option':sort,'category1':category1,'category2':category2},
-                    dataType : "text",
-                    success: function(string){
-                        //반환된 문자열은 json형태의 데이터가 들어있음 -> 쪼개서 나온 개수만큼 노드 생성
-                        if(string!='failed')
+            $('.category_contents_product').remove();
+            $.ajax({
+                type:"GET",
+                url:"/for_mobile/product_option.php",
+                data : {'option':sort,'category1':category1,'category2':category2,'page':0},
+                dataType : "text",
+                success: function(string){
+                    //반환된 문자열은 json형태의 데이터가 들어있음 -> 쪼개서 나온 개수만큼 노드 생성
+                    if(string!='failed')
+                    {
+                        var result_data = JSON.parse(string);
+                        all_product_count = result_data['all_product_count'];
+                        for(var result_count=0;result_count<result_data['product_key'].length;result_count++)
                         {
-                            var result_data = JSON.parse(string);
-                            for(var result_count=0;result_count<result_data['product_key'].length;result_count++)
+                            var append_data = "<div class='category_contents_product'>";
+                            append_data+="<div class='category_product_image_box'><img class='category_product_image' onclick=\"location.href='/main/product.php?product="+result_data['product_key'][result_count]+"'\" src='"+result_data['product_image'][result_count]+"'></div>";
+                            append_data+="<div class='category_shop_and_color'>";
+                            append_data+="<div class='category_color_box'>";
+                            for(var color_count=0;color_count<result_data['product_color'][result_count].length;color_count++)
                             {
-                                var append_data = "<div class='category_contents_product'>";
-                                append_data+="<div class='category_product_image_box'><img class='category_product_image' onclick=\"location.href='/main/product.php?product="+result_data['product_key'][result_count]+"'\" src='"+result_data['product_image'][result_count]+"'></div>";
-                                append_data+="<div class='category_shop_and_color'>";
-                                append_data+="<div class='category_color_box'>";
-                                for(var color_count=0;color_count<result_data['product_color'][result_count].length;color_count++)
-                                {
-                                    append_data+="<div class='category_color_contents' style='background:"+result_data['product_color'][result_count][color_count]+"'></div>";
-                                }
-                                append_data+="</div></div><div class='category_shop_name'>"+result_data['product_shop'][result_count]+"</div>";
-                                append_data+="<div class='category_product_name' onclick=\"location.href='/main/product.php?product="+result_data['product_key'][result_count]+"'\">"+result_data['product_name'][result_count]+"</div>";
-                                append_data+="<div class='category_product_price'>"+result_data['product_price'][result_count]+" Won</div></div>";
-                                $('.category_contents_product_box').append(append_data);
+                                append_data+="<div class='category_color_contents' style='background:"+result_data['product_color'][result_count][color_count]+"'></div>";
                             }
-                            if($(window).width()<1280)
+                            append_data+="</div></div><div class='category_shop_name'>"+result_data['product_shop'][result_count]+"</div>";
+                            append_data+="<div class='category_product_name' onclick=\"location.href='/main/product.php?product="+result_data['product_key'][result_count]+"'\">"+result_data['product_name'][result_count]+"</div>";
+                            append_data+="<div class='category_product_price'>"+result_data['product_price'][result_count]+" Won</div></div>";
+                            $('.category_contents_product_box').append(append_data);
+                        }
+                        if($(window).width()<1280)
+                        {
+                            $('.category_contents_product_box').css("width",($(window).width()-17));
+                            if($(window).width()<=973)
                             {
-                                $('.category_contents_product_box').css("width",($(window).width()-17));
-                                if($(window).width()<=973)
+                                if($(window).width()<=503)
                                 {
-                                    if($(window).width()<=503)
-                                    {
-                                        $('.category_contents_product').css("width",($('.category_contents_product_box').width()/2-25));
-                                    }
-                                    else
-                                    {
-                                        $('.category_contents_product').css("width",($('.category_contents_product_box').width()/3-25));
-                                    }
+                                    $('.category_contents_product').css("width",($('.category_contents_product_box').width()/2-25));
                                 }
                                 else
                                 {
-                                    $('.category_contents_product').css("width",($('.category_contents_product_box').width()/5-25));
+                                    $('.category_contents_product').css("width",($('.category_contents_product_box').width()/3-25));
                                 }
-                                $('.category_product_image_box').css("height",($('.category_contents_product').width()/4*5));
                             }
-                            else if($(window).width()>=1280)
+                            else
                             {
-                                $('.category_contents_product_box').css("width","1270px");
                                 $('.category_contents_product').css("width",($('.category_contents_product_box').width()/5-25));
-                                $('.category_product_image_box').css("height",($('.category_contents_product').width()/4*5));
                             }
-                            setTimeout(function() {
-                                $('.category_contents_product_box').fadeIn(400);
-                                $('.category_contents_product_box').fadeTo("slow",1);
-                            }, 500);
+                            $('.category_product_image_box').css("height",($('.category_contents_product').width()/4*5));
                         }
-                    },
-                    error: function(xhr, status, error) {
-                        alert(error);
+                        else if($(window).width()>=1280)
+                        {
+                            $('.category_contents_product_box').css("width","1270px");
+                            $('.category_contents_product').css("width",($('.category_contents_product_box').width()/5-25));
+                            $('.category_product_image_box').css("height",($('.category_contents_product').width()/4*5));
+                        }
                     }
-                });
-            }, 400);
+                },
+                error: function(xhr, status, error) {
+                    alert(error);
+                }
+            });
         }
     }
 </script>

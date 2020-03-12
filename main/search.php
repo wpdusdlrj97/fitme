@@ -79,7 +79,7 @@ else
         .search_shop_name{ font-size:12px; float:left; width:100%; margin-bottom:2px; cursor:pointer; font-weight:lighter; color:#424242; margin-left:5px; }
         .search_color_box{ float:left; height:12px; margin-bottom:3px; }
         .search_color_contents{ float:left; width:12px; height:12px; margin-right:0.4vw; }
-        .search_product_image_box{ width:100%; height:300px; cursor:pointer; background-color:#F2F2F2; }
+        .search_product_image_box{ width:100%; height:300px; cursor:pointer; background-color:#F2F2F2; text-align:center; }
         .search_product_image{ max-width:100%; height:100%; }
         .search_product_name{ float:left; font-size:12px; text-align:left; margin-top:3px; margin-left:5px; overflow:hidden; height:32px; width:100%; margin-bottom:3px; cursor:pointer; font-weight:lighter; color:#424242; }
         .search_product_price{ float:left; font-size:12px; font-weight:lighter; margin-left:5px; color:#424242; }
@@ -188,47 +188,31 @@ else
         {
             if(numb==1)
             {
-                $('.search_hidden_shop_contents_box').fadeOut(300);
-                $('.search_hidden_shop_contents_box').fadeTo("slow",0);
-                setTimeout(function() {
-                    $('.search_shop_contents_box').css("display","none");
-                    $('.search_product_contents_box').css("display","block");
-                    $('.search_contents_category_product').css({
-                        "color":"#2E2E2E",
-                        "border-bottom":"2px #2E2E2E solid"
-                    });
-                    $('.search_contents_category_shop').css({
-                        "color":"#848484;",
-                        "border-bottom":"none"
-                    });
-                    $('.search_contents_category_text').text("<?php echo count($search_product_key)?> Search products");
-                    setTimeout(function() {
-                        $('.search_hidden_product_contents_box').fadeIn(400);
-                        $('.search_hidden_product_contents_box').fadeTo("slow",1);
-                    }, 500);
-                }, 400);
+                $('.search_shop_contents_box').css("display","none");
+                $('.search_product_contents_box').css("display","block");
+                $('.search_contents_category_product').css({
+                    "color":"#2E2E2E",
+                    "border-bottom":"2px #2E2E2E solid"
+                });
+                $('.search_contents_category_shop').css({
+                    "color":"#848484;",
+                    "border-bottom":"none"
+                });
+                $('.search_contents_category_text').text("<?php echo count($search_product_key)?> Search products");
             }
             else
             {
-                $('.search_hidden_product_contents_box').fadeOut(300);
-                $('.search_hidden_product_contents_box').fadeTo("slow",0);
-                setTimeout(function() {
-                    $('.search_product_contents_box').css("display","none");
-                    $('.search_shop_contents_box').css("display","block");
-                    $('.search_contents_category_shop').css({
-                        "color":"#2E2E2E",
-                        "border-bottom":"2px #2E2E2E solid"
-                    });
-                    $('.search_contents_category_product').css({
-                        "color":"#848484;",
-                        "border-bottom":"none"
-                    });
-                    $('.search_contents_category_text').text("<?php echo count($shop_name_array)?> Search shops");
-                    setTimeout(function() {
-                        $('.search_hidden_shop_contents_box').fadeIn(400);
-                        $('.search_hidden_shop_contents_box').fadeTo("slow",1);
-                    }, 500);
-                }, 400);
+                $('.search_product_contents_box').css("display","none");
+                $('.search_shop_contents_box').css("display","block");
+                $('.search_contents_category_shop').css({
+                    "color":"#2E2E2E",
+                    "border-bottom":"2px #2E2E2E solid"
+                });
+                $('.search_contents_category_product').css({
+                    "color":"#848484;",
+                    "border-bottom":"none"
+                });
+                $('.search_contents_category_text').text("<?php echo count($shop_name_array)?> Search shops");
             }
             show_mylist=numb;
         }

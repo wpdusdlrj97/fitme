@@ -87,10 +87,7 @@ session_start();
         border: 1px solid #0C0;
     }
 
-    .form-style-2 .textarea-field {
-        height: 100px;
-        width: 55%;
-    }
+
 
     .form-style-2 input[type=submit],
     .form-style-2 input[type=button] {
@@ -237,7 +234,12 @@ session_start();
             padding-right: 5px;
         }
 
+        .form-style-2 input.input-field, .form-style-2 .select-field {
+            width: 150px;
+            height: 30px;
+        }
 
+        #member_box_image{ margin-left: 0px; }
 
     }
 

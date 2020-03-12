@@ -43,13 +43,27 @@
         height:40px;
         padding: 5px;
         font-size:15px;
-        border: 2px solid #ddd;
+        border: 1px solid #ddd;
     }
 
     .button {
-        background-color: #000000;
+        background-color: #9370db;
         border: none;
         color: white;
+        width: 500px;
+        height: 50px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 14px;
+        text-align: center;
+        cursor: pointer;
+    }
+
+    .button_2 {
+        background-color: white;
+        border: 1px solid #9370db;
+        color: #9370db;
         width: 500px;
         height: 50px;
         text-align: center;
@@ -184,7 +198,7 @@
 
             <div id="login_box_title" >
 
-                <p style="font-size:20px;">LOGIN</p>
+                <p style="font-size:20px; font-weight:bolder; color: #9370db">LOGIN</p>
 
             </div>
 
@@ -218,7 +232,7 @@
 
                 <div id="login_box_join_button">
 
-                    <button class="button" onclick="location.href='http://49.247.136.36/main/member/join_first.php'">회원가입</button>
+                    <button class="button_2" onclick="location.href='http://49.247.136.36/main/member/join_first.php'">회원가입</button>
 
                 </div>
 

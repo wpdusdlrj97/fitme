@@ -261,28 +261,6 @@ $ar_cookie = json_encode($cookie_json,JSON_UNESCAPED_UNICODE);
 
 setcookie('fitme_p', $ar_cookie, time() + 86400 * 7);
 
-//echo $cookie_json.'<br>';
-//for($cook_c=0;$cook_c<count($cookie_json);$cook_c++){
-//    if($cookie_json[$cook_c]==$product){
-//        array_splice($cookie_json,$cook_c,1);
-//        break;
-//    }
-//}
-//print_r($cookie_json);
-//if($cookie_json){
-//    if(count($cookie_json)==5){
-//        //마지막 인덱스 삭제후 0번인덱스에 삽입
-//        $cookie_json = array_pop($cookie_json);
-//        array_unshift($cookie_json,$product);
-//    }else{
-//        //0번 인덱스에 삽입
-//        array_unshift($cookie_json,$product);
-//    }
-//    print_r($cookie_json);
-//}else{
-//    $cookie_json = array();
-//    array_unshift($cookie_json,$product);
-//}
 ?>
 <!DOCTYPE html>
 <html lang="ko">
@@ -495,6 +473,8 @@ setcookie('fitme_p', $ar_cookie, time() + 86400 * 7);
         .product_preview_content_product_information_title{ width:100%; float:left; }
         .hidden_770_preview_product_image{ display:none; bottom:100%; left:calc(100% - 70px); width:60px; height:60px; position:relative; overflow:hidden; border-radius:100%; background:white; border:1px #E6E6E6 solid; }
         .hidden_770_preview_product_image:hover{ background:#D8D8D8; transition:all 200ms linear; cursor:pointer; }
+        .product_detail_top_shop_name{ font-weight:bold; height:35px; line-height:35px; font-size:20px; float:left; margin-bottom:10px; padding-left:5px; cursor:pointer; transition:all 200ms linear; opacity:0.9; }
+        .product_detail_top_shop_name:hover{ transition:all 200ms linear; opacity:0.7; }
         @media (max-width:1320px)
         {
             #product_body{ width:100%; }
@@ -638,6 +618,7 @@ setcookie('fitme_p', $ar_cookie, time() + 86400 * 7);
             </div>
         </div>
         <div class="product_detail_top_text_box">
+            <div class="product_detail_top_shop_name" onclick="location.href='/main/shop/shop_store.php?shop_id=<?php echo $shop_name?>'"><?php echo $shop_name?></div>
             <div class="product_detail_top_name"><?php echo $name?></div>
             <div class="product_detail_top_ex"><?php echo $ex?></div>
             <div class="product_detail_top_none_place"></div>
